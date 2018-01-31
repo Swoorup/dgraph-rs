@@ -1,0 +1,31 @@
+[package]
+name = "dgraph"
+version = "0.1.0"
+authors = ["Swoorup Joshi"]
+description = "A rust client for Dgraph graph database"
+readme = "README.md"
+license = "MIT"
+keywords = ["dgraph", "grpc"]
+repository = "https://github.com/Swoorup/dgraph-rs"
+homepage = "https://github.com/Swoorup/dgraph-rs"
+build = "build.rs"
+edition = "2018"
+
+[dependencies]
+grpcio = "0.4.3"
+futures = "0.1.25"
+protobuf = "2.3.0"
+failure = "0.1.5"
+rand = "0.6.5"
+
+[dev-dependencies]
+chrono = { version = "0.4.6", features = ["serde"] }
+serde = "1.0.87"
+serde_derive = "1.0.87"
+serde_json = "1.0.38"
+slog = "2.4.1"
+slog-term = "2.4.0"
+slog-scope = "4.1.1"
+
+[build-dependencies]
+protoc-grpcio = "1.0.1"
