@@ -28,25 +28,21 @@ pub struct Person {
 	pub age: Option<u8>,
 	pub dob: Option<DateTime<Utc>>,
 	pub married: Option<bool>,
-	#[serde(rename = "raw_bytes")]
-	pub raw: Option<Vec<u8>>,
-	#[serde(rename = "friend")]
-	pub friends: Option<Vec<Person>>,
-	#[serde(rename = "loc")]
-	pub location: Option<Location>,
+	pub friend: Option<Vec<Person>>,
+	pub loc: Option<Location>,
 	pub school: Option<Vec<School>>,
 }
 
-fn drop_all(client: &Dgraph) {
+fn drop_all(dgraph_client: &Dgraph) {
     let op_cleanup = dgraph::Operation {
         drop_all: true,
         ..Default::default()
     };
 
-    client.alter(&op_cleanup).expect("drop schema");
+    dgraph_client.alter(&op_cleanup).expect("drop schema");
 }
 
-fn set_schema(client: &Dgraph) {
+fn set_schema(dgraph_client: &Dgraph) {
     let op_schema = dgraph::Operation {
         schema: r#"
             name: string @index(exact) .
@@ -58,11 +54,11 @@ fn set_schema(client: &Dgraph) {
         ..Default::default()
     };
 
-    client.alter(&op_schema).expect("set schema");
+    dgraph_client.alter(&op_schema).expect("set schema");
 }
 
-fn create_data(client: &Dgraph) {
-    let mut txn = client.new_txn();
+fn create_data(dgraph_client: &Dgraph) {
+    let mut txn = dgraph_client.new_txn();
 
     let dob = Utc.ymd(1980, 1, 1).and_hms(23, 0, 0);
     // While setting an object if a struct has a Uid then its properties in the graph are updated
@@ -73,13 +69,12 @@ fn create_data(client: &Dgraph) {
         name: "Alice".to_string(),
         age: Some(26),
         married: Some(true),
-        location: Some(Location {
+        loc: Some(Location {
             kind: "Point".to_string(),
             coordinates: vec![1.1f64, 2f64],
         }),
         dob: Some(dob),
-        //raw: "raw_bytes".as_bytes().to_vec(),
-        friends: Some(vec![
+        friend: Some(vec![
             Person {
                 name: "Bob".to_string(),
                 age: Some(24),
@@ -96,7 +91,6 @@ fn create_data(client: &Dgraph) {
                 name: "Crown Public School".to_string(),
             },
         ]),
-        ..Default::default()
     };
 
     // Run mutation
@@ -119,15 +113,14 @@ fn create_data(client: &Dgraph) {
     }
 }
 
-fn query_data(client: &Dgraph) {
+fn query_data(dgraph_client: &Dgraph) {
     let query = r#"query all($a: string){
         me(func: eq(name, $a)) {
             name
-            dob
             age
-            loc
-            raw_bytes
             married
+            loc
+            dob
             friend {
                 name
                 age
@@ -141,7 +134,7 @@ fn query_data(client: &Dgraph) {
     let mut vars = HashMap::new();
     vars.insert("$a".to_string(), "Alice".to_string());
 
-    let resp = client.new_readonly_txn().query_with_vars(query, vars).expect("query");
+    let resp = dgraph_client.new_readonly_txn().query_with_vars(query, vars).expect("query");
     let root: Root = serde_json::from_slice(&resp.json).expect("parsing");
     info!("Root: {:#?}", root);
 }
@@ -149,19 +142,19 @@ fn query_data(client: &Dgraph) {
 fn run_example() {
     info!("connect to dgraph via grpc at localhost:9080");
 
-    let client = make_dgraph!(dgraph::new_dgraph_client("localhost:9080"));
+    let dgraph_client = make_dgraph!(dgraph::new_dgraph_client("localhost:9080"));
 
     info!("dropping all schema");
-    drop_all(&client);
+    drop_all(&dgraph_client);
 
     info!("setup schema");
-    set_schema(&client);
+    set_schema(&dgraph_client);
 
     info!("push data");
-    create_data(&client);
+    create_data(&dgraph_client);
 
     info!("query");
-    query_data(&client);
+    query_data(&dgraph_client);
 }
 
 fn main() {
