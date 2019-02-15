@@ -12,7 +12,7 @@ pub struct Txn<'a> {
     pub(super) client: &'a api_grpc::DgraphClient,
 }
 
-impl<'a> Txn<'a> {
+impl Txn<'_> {
     pub fn query(&mut self, query: impl Into<String>) -> Result<api::Response, Error> {
         self.query_with_vars(query, HashMap::new())
     }
