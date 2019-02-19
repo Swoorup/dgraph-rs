@@ -57,7 +57,7 @@ To set the schema, create an instance of `dgraph::Operation` and use the
 let op = dgraph::Operation{
   Schema: "name: string @index(exact) .", ..Default::default()
 };
-let result = dgraph.Alter(&op);
+let result = dgraph.alter(&op);
 // Check error
 ```
 
@@ -71,13 +71,12 @@ related to a predicate.
 To create a transaction, call `dgraph.new_txn()`, which returns a `dgraph::Txn` object. This
 operation incurs no network overhead.
 
-It is a good practice to call `txn.discard()` using a `defer` statement after it is initialized.
-Calling `txn.discard()` after `txn.commit()` is a no-op and you can call `txn.discard()` multiple
-times with no additional side-effects.
+Once `dgraph::Txn` goes out of scope, `txn.discard()` is automatically called via the `Drop` trait.
+Calling `txn.discard()` after `txn.commit()` is a no-op and calling this multiple
+times has no additional side-effects.
 
 ```rust
 let txn = dgraph.new_txn();
-txn.Discard(ctx);
 ```
 
 ### Run a mutation
@@ -134,7 +133,6 @@ let mut vars = HashMap::new();
 vars.insert("$a".to_string(), "Alice".to_string());
 
 let resp = dgraph.new_readonly_txn().query_with_vars(q, vars).expect("query");
-resp, err = txn.query_with_vars(ctx, q, map[string]string{"$a": "Alice"})
 let root: Root = serde_json::from_slice(&resp.json).expect("parsing");
 println!("Root: {:#?}", root);
 ```
