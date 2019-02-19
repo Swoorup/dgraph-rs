@@ -33,16 +33,16 @@ pub struct Person {
 	pub school: Option<Vec<School>>,
 }
 
-fn drop_all(dgraph_client: &Dgraph) {
+fn drop_all(dgraph: &Dgraph) {
     let op_cleanup = dgraph::Operation {
         drop_all: true,
         ..Default::default()
     };
 
-    dgraph_client.alter(&op_cleanup).expect("drop schema");
+    dgraph.alter(&op_cleanup).expect("drop schema");
 }
 
-fn set_schema(dgraph_client: &Dgraph) {
+fn set_schema(dgraph: &Dgraph) {
     let op_schema = dgraph::Operation {
         schema: r#"
             name: string @index(exact) .
@@ -54,11 +54,11 @@ fn set_schema(dgraph_client: &Dgraph) {
         ..Default::default()
     };
 
-    dgraph_client.alter(&op_schema).expect("set schema");
+    dgraph.alter(&op_schema).expect("set schema");
 }
 
-fn create_data(dgraph_client: &Dgraph) {
-    let mut txn = dgraph_client.new_txn();
+fn create_data(dgraph: &Dgraph) {
+    let mut txn = dgraph.new_txn();
 
     let dob = Utc.ymd(1980, 1, 1).and_hms(23, 0, 0);
     // While setting an object if a struct has a Uid then its properties in the graph are updated
@@ -113,7 +113,7 @@ fn create_data(dgraph_client: &Dgraph) {
     }
 }
 
-fn query_data(dgraph_client: &Dgraph) {
+fn query_data(dgraph: &Dgraph) {
     let query = r#"query all($a: string){
         me(func: eq(name, $a)) {
             name
@@ -134,7 +134,7 @@ fn query_data(dgraph_client: &Dgraph) {
     let mut vars = HashMap::new();
     vars.insert("$a".to_string(), "Alice".to_string());
 
-    let resp = dgraph_client.new_readonly_txn().query_with_vars(query, vars).expect("query");
+    let resp = dgraph.new_readonly_txn().query_with_vars(query, vars).expect("query");
     let root: Root = serde_json::from_slice(&resp.json).expect("parsing");
     info!("Root: {:#?}", root);
 }
@@ -142,19 +142,19 @@ fn query_data(dgraph_client: &Dgraph) {
 fn run_example() {
     info!("connect to dgraph via grpc at localhost:9080");
 
-    let dgraph_client = make_dgraph!(dgraph::new_dgraph_client("localhost:9080"));
+    let dgraph = make_dgraph!(dgraph::new_dgraph_client("localhost:9080"));
 
     info!("dropping all schema");
-    drop_all(&dgraph_client);
+    drop_all(&dgraph);
 
     info!("setup schema");
-    set_schema(&dgraph_client);
+    set_schema(&dgraph);
 
     info!("push data");
-    create_data(&dgraph_client);
+    create_data(&dgraph);
 
     info!("query");
-    query_data(&dgraph_client);
+    query_data(&dgraph);
 }
 
 fn main() {
