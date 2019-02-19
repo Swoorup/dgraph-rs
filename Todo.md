@@ -7,3 +7,4 @@
 - [ ] Add drop trait to Txn to discard transaction
 - [ ] Custom Errors with failure crate.
 - [ ] Use Cow or interned strings?
+- [ ] Use query builder for type safety?
