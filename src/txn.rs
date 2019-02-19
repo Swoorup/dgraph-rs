@@ -12,6 +12,15 @@ pub struct Txn<'a> {
     pub(super) client: &'a api_grpc::DgraphClient,
 }
 
+/// Call Txn::discard() once txn goes out of scope.
+/// This is safe to do so, and is possible a no-op
+impl Drop for Txn<'_> {
+    fn drop(&mut self) {
+        println!("Calling discard");
+        let _ = self.discard();
+    }
+}
+
 impl Txn<'_> {
     pub fn query(&mut self, query: impl Into<String>) -> Result<api::Response, Error> {
         self.query_with_vars(query, HashMap::new())
