@@ -174,3 +174,7 @@ if res.is_err() {
   // Retry or handle error
 }
 ```
+
+### Contribution
+
+Contribution are welcomed. Feel free to raise an issue, for feature requests, bug fixes and improvements.
