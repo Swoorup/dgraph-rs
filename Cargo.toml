@@ -8,7 +8,6 @@ license = "MIT"
 keywords = ["dgraph", "grpc"]
 repository = "https://github.com/Swoorup/dgraph-rs"
 homepage = "https://github.com/Swoorup/dgraph-rs"
-build = "build.rs"
 edition = "2018"
 
 [dependencies]
@@ -17,6 +16,7 @@ futures = "0.1.25"
 protobuf = "2.3.0"
 failure = "0.1.5"
 rand = "0.6.5"
+protoc-grpcio = { version = "1.0.1", optional = true }
 
 [dev-dependencies]
 chrono = { version = "0.4.6", features = ["serde"] }
@@ -27,5 +27,11 @@ slog = "2.4.1"
 slog-term = "2.4.0"
 slog-scope = "4.1.1"
 
-[build-dependencies]
-protoc-grpcio = "1.0.1"
+[features]
+compile-protobufs = ["protoc-grpcio"]
+
+[[bin]]
+doc = false
+name = "protoc"
+path = "compile-protobufs.rs"
+required-features = ["compile-protobufs"]
