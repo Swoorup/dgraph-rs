@@ -1,17 +1,31 @@
 #![allow(unused_variables)]
 
-
+mod client;
 mod protos;
 mod txn;
-mod client;
 
-use grpcio::{ChannelBuilder, EnvBuilder};
+use grpcio::{ChannelBuilder, ChannelCredentialsBuilder, EnvBuilder};
 use std::sync::Arc;
 
-pub use protos::api_grpc::*;
-pub use protos::api::*;
-pub use txn::Txn;
 pub use client::Dgraph;
+pub use protos::api::*;
+pub use protos::api_grpc::*;
+pub use txn::Txn;
+
+pub fn new_secure_dgraph_client(
+    addr: &str,
+    root_ca: Vec<u8>,
+    cert: Vec<u8>,
+    private_key: Vec<u8>,
+) -> DgraphClient {
+    let env = Arc::new(EnvBuilder::new().build());
+    let credentials = ChannelCredentialsBuilder::new()
+        .root_cert(root_ca)
+        .cert(cert, private_key)
+        .build();
+    let channel = ChannelBuilder::new(env).secure_connect(addr, credentials);
+    DgraphClient::new(channel)
+}
 
 pub fn new_dgraph_client(addr: &str) -> DgraphClient {
     let env = Arc::new(EnvBuilder::new().build());
