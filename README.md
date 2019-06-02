@@ -45,7 +45,26 @@ a macro to do so.
 The following code snippet shows just one connection.
 
 ```rust
-  let dgraph = make_dgraph!(dgraph::new_dgraph_client("localhost:9080"));
+let dgraph = make_dgraph!(dgraph::new_dgraph_client("localhost:9080"));
+```
+
+Alternatively, secure client can be used:
+
+```rust
+fn open_cert_file(path: &str) -> Vec<u8> {
+  ...
+}
+
+let root_ca = open_cert_file("./tls/ca.crt");
+let cert = open_cert_file("./tls/client.user.crt");
+let private_key = open_cert_file("./tls/client.user.key");
+
+let dgraph = make_dgraph!(dgraph::new_secure_dgraph_client(
+    "localhost:9080",
+    root_ca,
+    cert,
+    private_key
+));
 ```
 
 ### Alter the database
@@ -108,7 +127,7 @@ let mut mu = dgraph::Mutation {
 let assigned = txn.mutate(mu).expect("failed to create data");
 ```
 
-For a more complete example, see the simple example [simple](https://github.com/Swoorup/dgraph-rs/blob/master/examples/simple/main.rs).
+For a more complete example, see the simple example [simple](https://github.com/Swoorup/dgraph-rs/blob/master/examples/simple/main.rs) (or [the same example with secure client](https://github.com/Swoorup/dgraph-rs/blob/master/examples/tls/main.rs)).
 
 Sometimes, you only want to commit a mutation, without querying anything further.
 In such cases, you can use `mu.commit_now = true` to indicate that the
