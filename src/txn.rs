@@ -16,7 +16,6 @@ pub struct Txn<'a> {
 /// This is safe to do so, and is possible a no-op
 impl Drop for Txn<'_> {
     fn drop(&mut self) {
-        println!("Calling discard");
         let _ = self.discard();
     }
 }
