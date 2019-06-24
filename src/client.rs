@@ -66,6 +66,7 @@ impl Dgraph {
             finished: false,
             mutated: false,
             read_only: false,
+            best_effort: false,
             client: self
                 .any_client()
                 .expect("Cannot create transactions. No client present!"),

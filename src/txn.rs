@@ -8,6 +8,7 @@ pub struct Txn<'a> {
     pub(super) context: api::TxnContext,
     pub(super) finished: bool,
     pub(super) read_only: bool,
+    pub(super) best_effort: bool,
     pub(super) mutated: bool,
     pub(super) client: &'a api_grpc::DgraphClient,
 }
@@ -21,6 +22,18 @@ impl Drop for Txn<'_> {
 }
 
 impl Txn<'_> {
+    // best_effort enables best effort in read-only queries. Using this flag will ask the
+    // Dgraph Alpha to try to get timestamps from memory in a best effort to reduce the number of
+    // outbound requests to Zero. This may yield improved latencies in read-bound datasets.
+    // Returns the transaction itself.
+    pub fn best_effort(&mut self) -> Result<&Txn, Error> {
+        if !self.read_only {
+            bail!("Best effort only works for read-only queries")
+        }
+        self.best_effort = true;
+        Ok(self)
+    }
+
     pub fn query(&mut self, query: impl Into<String>) -> Result<api::Response, Error> {
         self.query_with_vars(query, HashMap::new())
     }
@@ -36,7 +49,9 @@ impl Txn<'_> {
 
         let res = self.client.query(&api::Request {
             query: query.into(),
-            vars,
+            vars: vars,
+            read_only: self.read_only,
+            best_effort: self.best_effort,
             ..Default::default()
         })?;
 
