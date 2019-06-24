@@ -1,8 +1,8 @@
-use std::collections::HashMap;
 use failure::{bail, Error};
+use std::collections::HashMap;
 
-use crate::protos::api_grpc;
 use crate::protos::api;
+use crate::protos::api_grpc;
 
 pub struct Txn<'a> {
     pub(super) context: api::TxnContext,
@@ -25,21 +25,24 @@ impl Txn<'_> {
         self.query_with_vars(query, HashMap::new())
     }
 
-    pub fn query_with_vars(&mut self, query: impl Into<String>, vars: HashMap<String, String>) -> Result<api::Response, Error> {
+    pub fn query_with_vars(
+        &mut self,
+        query: impl Into<String>,
+        vars: HashMap<String, String>,
+    ) -> Result<api::Response, Error> {
         if self.finished {
             bail!("Transaction has already been committed or discarded");
         }
 
-        let res = self.client.query(&api::Request 
-        { 
-            query: query.into(), 
-            vars, 
+        let res = self.client.query(&api::Request {
+            query: query.into(),
+            vars,
             ..Default::default()
         })?;
 
         let txn = match res.txn.as_ref() {
             Some(txn) => txn,
-            None => bail!("Got empty Txn response back from query")
+            None => bail!("Got empty Txn response back from query"),
         };
 
         self.merge_context(txn)?;
@@ -48,11 +51,10 @@ impl Txn<'_> {
     }
 
     pub fn mutate(&mut self, mut mu: api::Mutation) -> Result<api::Assigned, Error> {
-
         match (self.finished, self.read_only) {
             (true, _) => bail!("Txn is finished"),
             (_, true) => bail!("Txn is read only"),
-            _ => ()
+            _ => (),
         }
 
         self.mutated = true;
@@ -75,7 +77,7 @@ impl Txn<'_> {
         {
             let context = match mu_res.context.as_ref() {
                 Some(context) => context,
-                None => bail!("Missing Txn context on mutation response")
+                None => bail!("Missing Txn context on mutation response"),
             };
 
             self.merge_context(context)?;
@@ -88,7 +90,7 @@ impl Txn<'_> {
         match (self.finished, self.read_only) {
             (true, _) => bail!("Txn is finished"),
             (_, true) => bail!("Txn is read only"),
-            _ => ()
+            _ => (),
         }
 
         self.commit_or_abort()
@@ -101,12 +103,12 @@ impl Txn<'_> {
 
     fn commit_or_abort(&mut self) -> Result<(), Error> {
         if self.finished {
-            return Ok(())
+            return Ok(());
         }
         self.finished = true;
 
         if !self.mutated {
-            return Ok(())
+            return Ok(());
         }
 
         self.client.commit_or_abort(&self.context)?;
