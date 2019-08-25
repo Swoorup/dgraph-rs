@@ -11,8 +11,6 @@ before_install:
   - docker ps
 
 script:
-  - cargo clippy -- -D warnings
-  - cargo fmt -- --check
   - cargo test --verbose -- --test-threads=1
 
 matrix:
