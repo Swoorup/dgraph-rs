@@ -194,7 +194,23 @@ if res.is_err() {
 }
 ```
 
-### Contribution
+## Integration tests
+
+Tests require Dgraph running on `localhost:19080`. For the convenience there's
+`docker-compose.yml` prepared in the root directory:
+
+```bash
+docker-compose up -d
+```
+
+Since we are working with database tests also need to be run in a single
+thread to prevent aborts:
+
+```bash
+cargo test -- --test-threads=1
+```
+
+## Contribution
 
 Contribution are welcomed. Feel free to raise an issue, for feature requests, bug fixes and improvements.
 
