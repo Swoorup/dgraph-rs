@@ -7,6 +7,8 @@ mod txn;
 use grpcio::{ChannelBuilder, ChannelCredentialsBuilder, EnvBuilder};
 use std::sync::Arc;
 
+pub use grpcio;
+
 pub use client::Dgraph;
 pub use protos::api::*;
 pub use protos::api_grpc::*;
