@@ -1,8 +1,20 @@
 language: rust
+services:
+  - docker
 rust:
   - stable
   - beta
   - nightly
+
+before_install:
+  - docker-compose up -d
+  - docker ps
+
+script:
+  - cargo clippy -- -D warnings
+  - cargo fmt -- --check
+  - cargo test --verbose -- --test-threads=1
+
 matrix:
   allow_failures:
     - rust: nightly
