@@ -78,7 +78,7 @@ fn it_commits_a_mutation() {
     let mut txn = dgraph.new_txn();
     let mut mutation = dgraph::Mutation::new();
 
-    mutation.set_set_json(r#"{"name": "Alice"}"#.as_bytes().to_owned());
+    mutation.set_set_json(br#"{"name": "Alice"}"#.to_vec());
     txn.mutate(mutation).unwrap();
     let result = txn.commit();
 
@@ -95,7 +95,7 @@ fn it_returns_error_if_autocommited_mutation_is_commited_again() {
         ..Default::default()
     };
 
-    mutation.set_set_json(r#"{"name": "Alice"}"#.as_bytes().to_owned());
+    mutation.set_set_json(br#"{"name": "Alice"}"#.to_vec());
     txn.mutate(mutation).unwrap();
     let result = txn.commit();
 
@@ -109,7 +109,7 @@ fn it_does_not_allow_mutation_in_readonly_transaction() {
     let mut txn = dgraph.new_readonly_txn();
     let mut mutation = dgraph::Mutation::new();
 
-    mutation.set_set_json(r#"{"name": "Alice"}"#.as_bytes().to_owned());
+    mutation.set_set_json(br#"{"name": "Alice"}"#.to_vec());
     let result = txn.mutate(mutation);
 
     assert_eq!(result.is_err(), true);
@@ -122,7 +122,7 @@ fn it_discards_a_transaction() {
     let mut txn = dgraph.new_txn();
     let mut mutation = dgraph::Mutation::new();
 
-    mutation.set_set_json(r#"{"name": "Alice"}"#.as_bytes().to_owned());
+    mutation.set_set_json(br#"{"name": "Alice"}"#.to_vec());
     txn.mutate(mutation).unwrap();
     let result = txn.discard();
 
@@ -139,7 +139,7 @@ fn it_does_nothing_if_autocommited_mutation_is_discarded() {
         ..Default::default()
     };
 
-    mutation.set_set_json(r#"{"name": "Alice"}"#.as_bytes().to_owned());
+    mutation.set_set_json(br#"{"name": "Alice"}"#.to_vec());
     txn.mutate(mutation).unwrap();
     let result = txn.discard();
 
@@ -153,7 +153,7 @@ fn it_does_not_commit_discarded_transaction() {
     let mut txn = dgraph.new_txn();
     let mut mutation = dgraph::Mutation::new();
 
-    mutation.set_set_json(r#"{"name": "Alice"}"#.as_bytes().to_owned());
+    mutation.set_set_json(br#"{"name": "Alice"}"#.to_vec());
     txn.mutate(mutation).unwrap();
     let _ = txn.discard();
     let result = txn.commit();
