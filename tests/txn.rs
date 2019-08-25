@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
-use dgraph::{make_dgraph};
+use dgraph::make_dgraph;
+use serde_derive::{Deserialize, Serialize};
 use serde_json;
-use serde_derive::{Serialize, Deserialize};
 
 mod common;
 
@@ -21,11 +21,14 @@ fn it_runs_simple_query() {
     let dgraph = make_dgraph!(dgraph::new_dgraph_client(common::DGRAPH_URL));
 
     let uid = "0x1";
-    let query = format!(r#"{{
+    let query = format!(
+        r#"{{
         uids(func: uid({})) {{
             uid,
         }}
-    }}"#, uid)
+    }}"#,
+        uid
+    )
     .to_string();
     let resp = dgraph.new_readonly_txn().query(query);
     let json: UidJson = serde_json::from_slice(&resp.unwrap().json).unwrap();
