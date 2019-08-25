@@ -1,13 +1,14 @@
-use std::collections::HashMap;
 use failure::{bail, Error};
+use std::collections::HashMap;
 
-use crate::protos::api_grpc;
 use crate::protos::api;
+use crate::protos::api_grpc;
 
 pub struct Txn<'a> {
     pub(super) context: api::TxnContext,
     pub(super) finished: bool,
     pub(super) read_only: bool,
+    pub(super) best_effort: bool,
     pub(super) mutated: bool,
     pub(super) client: &'a api_grpc::DgraphClient,
 }
@@ -21,25 +22,42 @@ impl Drop for Txn<'_> {
 }
 
 impl Txn<'_> {
+    // best_effort enables best effort in read-only queries. Using this flag will ask the
+    // Dgraph Alpha to try to get timestamps from memory in a best effort to reduce the number of
+    // outbound requests to Zero. This may yield improved latencies in read-bound datasets.
+    // Returns the transaction itself.
+    pub fn best_effort(&mut self) -> Result<&Txn, Error> {
+        if !self.read_only {
+            bail!("Best effort only works for read-only queries")
+        }
+        self.best_effort = true;
+        Ok(self)
+    }
+
     pub fn query(&mut self, query: impl Into<String>) -> Result<api::Response, Error> {
         self.query_with_vars(query, HashMap::new())
     }
 
-    pub fn query_with_vars(&mut self, query: impl Into<String>, vars: HashMap<String, String>) -> Result<api::Response, Error> {
+    pub fn query_with_vars(
+        &mut self,
+        query: impl Into<String>,
+        vars: HashMap<String, String>,
+    ) -> Result<api::Response, Error> {
         if self.finished {
             bail!("Transaction has already been committed or discarded");
         }
 
-        let res = self.client.query(&api::Request 
-        { 
-            query: query.into(), 
-            vars, 
+        let res = self.client.query(&api::Request {
+            query: query.into(),
+            vars: vars,
+            read_only: self.read_only,
+            best_effort: self.best_effort,
             ..Default::default()
         })?;
 
         let txn = match res.txn.as_ref() {
             Some(txn) => txn,
-            None => bail!("Got empty Txn response back from query")
+            None => bail!("Got empty Txn response back from query"),
         };
 
         self.merge_context(txn)?;
@@ -48,11 +66,10 @@ impl Txn<'_> {
     }
 
     pub fn mutate(&mut self, mut mu: api::Mutation) -> Result<api::Assigned, Error> {
-
         match (self.finished, self.read_only) {
             (true, _) => bail!("Txn is finished"),
             (_, true) => bail!("Txn is read only"),
-            _ => ()
+            _ => (),
         }
 
         self.mutated = true;
@@ -75,7 +92,7 @@ impl Txn<'_> {
         {
             let context = match mu_res.context.as_ref() {
                 Some(context) => context,
-                None => bail!("Missing Txn context on mutation response")
+                None => bail!("Missing Txn context on mutation response"),
             };
 
             self.merge_context(context)?;
@@ -88,7 +105,7 @@ impl Txn<'_> {
         match (self.finished, self.read_only) {
             (true, _) => bail!("Txn is finished"),
             (_, true) => bail!("Txn is read only"),
-            _ => ()
+            _ => (),
         }
 
         self.commit_or_abort()
@@ -101,12 +118,12 @@ impl Txn<'_> {
 
     fn commit_or_abort(&mut self) -> Result<(), Error> {
         if self.finished {
-            return Ok(())
+            return Ok(());
         }
         self.finished = true;
 
         if !self.mutated {
-            return Ok(())
+            return Ok(());
         }
 
         self.client.commit_or_abort(&self.context)?;

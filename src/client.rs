@@ -1,19 +1,18 @@
-use std::sync::Mutex;
 use failure::Error;
 use rand::prelude::*;
+use std::sync::Mutex;
 
-use crate::protos::api_grpc;
 use crate::protos::api;
+use crate::protos::api_grpc;
 use crate::txn::Txn;
 
 // Dgraph is a transaction aware client to a set of dgraph server instances.
 pub struct Dgraph {
     jwt: Mutex<api::Jwt>,
-    dc: Vec<api_grpc::DgraphClient>
+    dc: Vec<api_grpc::DgraphClient>,
 }
 
 impl Dgraph {
-
     /// Creates a new Dgraph for interacting with the Dgraph store connected to in
     /// conns.
     /// The client can be backed by multiple connections (to the same server, or multiple servers in a
@@ -28,7 +27,10 @@ impl Dgraph {
     }
 
     pub fn login(&self, userid: String, password: String) -> Result<api::Response, Error> {
-        let _guard = self.jwt.lock().expect("Unable to block or acquire lock to jwt mutex");
+        let _guard = self
+            .jwt
+            .lock()
+            .expect("Unable to block or acquire lock to jwt mutex");
         let dc = self.any_client().expect("Cannot login. No client present");
 
         let login_request = api::LoginRequest {
@@ -64,7 +66,10 @@ impl Dgraph {
             finished: false,
             mutated: false,
             read_only: false,
-            client: self.any_client().expect("Cannot create transactions. No client present!")
+            best_effort: false,
+            client: self
+                .any_client()
+                .expect("Cannot create transactions. No client present!"),
         }
     }
 

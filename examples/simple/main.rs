@@ -1,36 +1,36 @@
 use chrono::prelude::*;
-use dgraph::{Dgraph, make_dgraph};
-use serde_derive::{Serialize, Deserialize};
-use slog::{Drain, slog_info, slog_o};
-use slog_scope::{info};
+use dgraph::{make_dgraph, Dgraph};
+use serde_derive::{Deserialize, Serialize};
+use slog::{slog_info, slog_o, Drain};
+use slog_scope::info;
 use std::collections::HashMap;
 
 #[derive(Serialize, Deserialize, Default, Debug)]
 pub struct Root {
-	pub me: Vec<Person>,
+    pub me: Vec<Person>,
 }
 
 #[derive(Serialize, Deserialize, Default, Debug)]
 pub struct School {
-	pub name: String,
+    pub name: String,
 }
 
 #[derive(Serialize, Deserialize, Default, Debug)]
 pub struct Location {
-	#[serde(rename = "type")]
-	pub kind: String,
-	pub coordinates: Vec<f64>,
+    #[serde(rename = "type")]
+    pub kind: String,
+    pub coordinates: Vec<f64>,
 }
 
 #[derive(Serialize, Deserialize, Default, Debug)]
 pub struct Person {
-	pub name: String,
-	pub age: Option<u8>,
-	pub dob: Option<DateTime<Utc>>,
-	pub married: Option<bool>,
-	pub friend: Option<Vec<Person>>,
-	pub loc: Option<Location>,
-	pub school: Option<Vec<School>>,
+    pub name: String,
+    pub age: Option<u8>,
+    pub dob: Option<DateTime<Utc>>,
+    pub married: Option<bool>,
+    pub friend: Option<Vec<Person>>,
+    pub loc: Option<Location>,
+    pub school: Option<Vec<School>>,
 }
 
 fn drop_all(dgraph: &Dgraph) {
@@ -50,7 +50,8 @@ fn set_schema(dgraph: &Dgraph) {
             married: bool .
             loc: geo .
             dob: datetime .
-        "#.to_string(),
+        "#
+        .to_string(),
         ..Default::default()
     };
 
@@ -86,15 +87,13 @@ fn create_data(dgraph: &Dgraph) {
                 ..Default::default()
             },
         ]),
-        school: Some(vec![
-            School {
-                name: "Crown Public School".to_string(),
-            },
-        ]),
+        school: Some(vec![School {
+            name: "Crown Public School".to_string(),
+        }]),
     };
 
     // Run mutation
-    let mut mutation = dgraph::Mutation::new(); 
+    let mut mutation = dgraph::Mutation::new();
     mutation.set_set_json(serde_json::to_vec(&p).expect("invalid json"));
     let assigned = txn.mutate(mutation).expect("failed to create data");
 
@@ -105,7 +104,10 @@ fn create_data(dgraph: &Dgraph) {
     // Assigned#getUidsMap() returns a map from blank node names to uids.
     // For a json mutation, blank node names "blank-0", "blank-1", ... are used
     // for all the created nodes.
-    info!("Created person named 'Alice' with uid = {}", assigned.uids["blank-0"]);
+    info!(
+        "Created person named 'Alice' with uid = {}",
+        assigned.uids["blank-0"]
+    );
 
     info!("All created nodes (map from blank node names to uids):");
     for (key, val) in assigned.uids.iter() {
@@ -129,12 +131,16 @@ fn query_data(dgraph: &Dgraph) {
                 name
             }
         }
-    }"#.to_string();
+    }"#
+    .to_string();
 
     let mut vars = HashMap::new();
     vars.insert("$a".to_string(), "Alice".to_string());
 
-    let resp = dgraph.new_readonly_txn().query_with_vars(query, vars).expect("query");
+    let resp = dgraph
+        .new_readonly_txn()
+        .query_with_vars(query, vars)
+        .expect("query");
     let root: Root = serde_json::from_slice(&resp.json).expect("parsing");
     info!("Root: {:#?}", root);
 }
@@ -159,12 +165,12 @@ fn run_example() {
 
 fn main() {
     let plain = slog_term::PlainSyncDecorator::new(std::io::stdout());
-    let log = slog::Logger::root(
-        slog_term::FullFormat::new(plain)
-        .build().fuse(), slog_o!()
-    );
+    let log = slog::Logger::root(slog_term::FullFormat::new(plain).build().fuse(), slog_o!());
 
     // Make sure to save the guard, see documentation for more information
     let _guard = slog_scope::set_global_logger(log);
-    slog_scope::scope(&slog_scope::logger().new(slog_o!("scope" => "1")), run_example);
+    slog_scope::scope(
+        &slog_scope::logger().new(slog_o!("scope" => "1")),
+        run_example,
+    );
 }
