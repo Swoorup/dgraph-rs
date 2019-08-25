@@ -127,6 +127,23 @@ fn it_discards_a_transaction() {
 }
 
 #[test]
+fn it_does_nothing_if_autocommited_mutation_is_discarded() {
+    let dgraph = make_dgraph!(dgraph::new_dgraph_client(common::DGRAPH_URL));
+
+    let mut txn = dgraph.new_txn();
+    let mut mutation = dgraph::Mutation {
+        commit_now: true,
+        ..Default::default()
+    };
+
+    mutation.set_set_json(r#"{"name": "Alice"}"#.as_bytes().to_owned());
+    txn.mutate(mutation).unwrap();
+    let result = txn.discard();
+
+    assert_eq!(result.is_ok(), true);
+}
+
+#[test]
 fn it_does_not_commit_discarded_transaction() {
     let dgraph = make_dgraph!(dgraph::new_dgraph_client(common::DGRAPH_URL));
 
