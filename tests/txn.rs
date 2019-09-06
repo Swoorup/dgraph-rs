@@ -115,19 +115,19 @@ fn it_does_not_allow_mutation_in_readonly_transaction() {
     assert_eq!(result.is_err(), true);
 }
 
-#[test]
-fn it_discards_a_transaction() {
-    let dgraph = make_dgraph!(dgraph::new_dgraph_client(common::DGRAPH_URL));
+// #[test]
+// fn it_discards_a_transaction() {
+//     let dgraph = make_dgraph!(dgraph::new_dgraph_client(common::DGRAPH_URL));
 
-    let mut txn = dgraph.new_txn();
-    let mut mutation = dgraph::Mutation::new();
+//     let mut txn = dgraph.new_txn();
+//     let mut mutation = dgraph::Mutation::new();
 
-    mutation.set_set_json(br#"{"name": "Alice"}"#.to_vec());
-    txn.mutate(mutation).unwrap();
-    let result = txn.discard();
+//     mutation.set_set_json(br#"{"name": "Alice"}"#.to_vec());
+//     txn.mutate(mutation).unwrap();
+//     let result = txn.discard();
 
-    assert_eq!(result.is_ok(), true);
-}
+//     assert_eq!(result.is_ok(), true);
+// }
 
 #[test]
 fn it_does_nothing_if_autocommited_mutation_is_discarded() {
