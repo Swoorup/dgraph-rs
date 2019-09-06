@@ -7,10 +7,13 @@ rust:
   - nightly
 
 before_install:
+  - rustup component add clippy rustfmt
   - docker-compose up -d
   - docker ps
 
 script:
+  - cargo clippy -- -D warnings
+  - cargo fmt -- --check
   - cargo test --verbose -- --test-threads=1
 
 matrix:
