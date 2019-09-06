@@ -1,6 +1,8 @@
 A rust client for dgraph
 ========================
 
+[![Build Status](https://travis-ci.org/Swoorup/dgraph-rs.svg?branch=master)](https://travis-ci.org/Swoorup/dgraph-rs)
+
 Dgraph Rust client which communicates with the server using
 [gRPC](https://grpc.io/).
 
