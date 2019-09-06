@@ -3,7 +3,7 @@
 
 // https://github.com/Manishearth/rust-clippy/issues/702
 #![allow(unknown_lints)]
-#![allow(clippy)]
+#![allow(clippy::all)]
 
 #![cfg_attr(rustfmt, rustfmt_skip)]
 
@@ -289,13 +289,13 @@ impl ::protobuf::Message for Request {
         &mut self.unknown_fields
     }
 
-    fn as_any(&self) -> &::std::any::Any {
-        self as &::std::any::Any
+    fn as_any(&self) -> &dyn ::std::any::Any {
+        self as &dyn ::std::any::Any
     }
-    fn as_any_mut(&mut self) -> &mut ::std::any::Any {
-        self as &mut ::std::any::Any
+    fn as_any_mut(&mut self) -> &mut dyn ::std::any::Any {
+        self as &mut dyn ::std::any::Any
     }
-    fn into_any(self: Box<Self>) -> ::std::boxed::Box<::std::any::Any> {
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn ::std::any::Any> {
         self
     }
 
@@ -633,13 +633,13 @@ impl ::protobuf::Message for Response {
         &mut self.unknown_fields
     }
 
-    fn as_any(&self) -> &::std::any::Any {
-        self as &::std::any::Any
+    fn as_any(&self) -> &dyn ::std::any::Any {
+        self as &dyn ::std::any::Any
     }
-    fn as_any_mut(&mut self) -> &mut ::std::any::Any {
-        self as &mut ::std::any::Any
+    fn as_any_mut(&mut self) -> &mut dyn ::std::any::Any {
+        self as &mut dyn ::std::any::Any
     }
-    fn into_any(self: Box<Self>) -> ::std::boxed::Box<::std::any::Any> {
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn ::std::any::Any> {
         self
     }
 
@@ -917,13 +917,13 @@ impl ::protobuf::Message for Assigned {
         &mut self.unknown_fields
     }
 
-    fn as_any(&self) -> &::std::any::Any {
-        self as &::std::any::Any
+    fn as_any(&self) -> &dyn ::std::any::Any {
+        self as &dyn ::std::any::Any
     }
-    fn as_any_mut(&mut self) -> &mut ::std::any::Any {
-        self as &mut ::std::any::Any
+    fn as_any_mut(&mut self) -> &mut dyn ::std::any::Any {
+        self as &mut dyn ::std::any::Any
     }
-    fn into_any(self: Box<Self>) -> ::std::boxed::Box<::std::any::Any> {
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn ::std::any::Any> {
         self
     }
 
@@ -1379,13 +1379,13 @@ impl ::protobuf::Message for Mutation {
         &mut self.unknown_fields
     }
 
-    fn as_any(&self) -> &::std::any::Any {
-        self as &::std::any::Any
+    fn as_any(&self) -> &dyn ::std::any::Any {
+        self as &dyn ::std::any::Any
     }
-    fn as_any_mut(&mut self) -> &mut ::std::any::Any {
-        self as &mut ::std::any::Any
+    fn as_any_mut(&mut self) -> &mut dyn ::std::any::Any {
+        self as &mut dyn ::std::any::Any
     }
-    fn into_any(self: Box<Self>) -> ::std::boxed::Box<::std::any::Any> {
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn ::std::any::Any> {
         self
     }
 
@@ -1722,13 +1722,13 @@ impl ::protobuf::Message for Operation {
         &mut self.unknown_fields
     }
 
-    fn as_any(&self) -> &::std::any::Any {
-        self as &::std::any::Any
+    fn as_any(&self) -> &dyn ::std::any::Any {
+        self as &dyn ::std::any::Any
     }
-    fn as_any_mut(&mut self) -> &mut ::std::any::Any {
-        self as &mut ::std::any::Any
+    fn as_any_mut(&mut self) -> &mut dyn ::std::any::Any {
+        self as &mut dyn ::std::any::Any
     }
-    fn into_any(self: Box<Self>) -> ::std::boxed::Box<::std::any::Any> {
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn ::std::any::Any> {
         self
     }
 
@@ -1979,13 +1979,13 @@ impl ::protobuf::Message for Payload {
         &mut self.unknown_fields
     }
 
-    fn as_any(&self) -> &::std::any::Any {
-        self as &::std::any::Any
+    fn as_any(&self) -> &dyn ::std::any::Any {
+        self as &dyn ::std::any::Any
     }
-    fn as_any_mut(&mut self) -> &mut ::std::any::Any {
-        self as &mut ::std::any::Any
+    fn as_any_mut(&mut self) -> &mut dyn ::std::any::Any {
+        self as &mut dyn ::std::any::Any
     }
-    fn into_any(self: Box<Self>) -> ::std::boxed::Box<::std::any::Any> {
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn ::std::any::Any> {
         self
     }
 
@@ -2320,13 +2320,13 @@ impl ::protobuf::Message for TxnContext {
         &mut self.unknown_fields
     }
 
-    fn as_any(&self) -> &::std::any::Any {
-        self as &::std::any::Any
+    fn as_any(&self) -> &dyn ::std::any::Any {
+        self as &dyn ::std::any::Any
     }
-    fn as_any_mut(&mut self) -> &mut ::std::any::Any {
-        self as &mut ::std::any::Any
+    fn as_any_mut(&mut self) -> &mut dyn ::std::any::Any {
+        self as &mut dyn ::std::any::Any
     }
-    fn into_any(self: Box<Self>) -> ::std::boxed::Box<::std::any::Any> {
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn ::std::any::Any> {
         self
     }
 
@@ -2482,13 +2482,13 @@ impl ::protobuf::Message for Check {
         &mut self.unknown_fields
     }
 
-    fn as_any(&self) -> &::std::any::Any {
-        self as &::std::any::Any
+    fn as_any(&self) -> &dyn ::std::any::Any {
+        self as &dyn ::std::any::Any
     }
-    fn as_any_mut(&mut self) -> &mut ::std::any::Any {
-        self as &mut ::std::any::Any
+    fn as_any_mut(&mut self) -> &mut dyn ::std::any::Any {
+        self as &mut dyn ::std::any::Any
     }
-    fn into_any(self: Box<Self>) -> ::std::boxed::Box<::std::any::Any> {
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn ::std::any::Any> {
         self
     }
 
@@ -2645,13 +2645,13 @@ impl ::protobuf::Message for Version {
         &mut self.unknown_fields
     }
 
-    fn as_any(&self) -> &::std::any::Any {
-        self as &::std::any::Any
+    fn as_any(&self) -> &dyn ::std::any::Any {
+        self as &dyn ::std::any::Any
     }
-    fn as_any_mut(&mut self) -> &mut ::std::any::Any {
-        self as &mut ::std::any::Any
+    fn as_any_mut(&mut self) -> &mut dyn ::std::any::Any {
+        self as &mut dyn ::std::any::Any
     }
-    fn into_any(self: Box<Self>) -> ::std::boxed::Box<::std::any::Any> {
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn ::std::any::Any> {
         self
     }
 
@@ -2834,13 +2834,13 @@ impl ::protobuf::Message for LinRead {
         &mut self.unknown_fields
     }
 
-    fn as_any(&self) -> &::std::any::Any {
-        self as &::std::any::Any
+    fn as_any(&self) -> &dyn ::std::any::Any {
+        self as &dyn ::std::any::Any
     }
-    fn as_any_mut(&mut self) -> &mut ::std::any::Any {
-        self as &mut ::std::any::Any
+    fn as_any_mut(&mut self) -> &mut dyn ::std::any::Any {
+        self as &mut dyn ::std::any::Any
     }
-    fn into_any(self: Box<Self>) -> ::std::boxed::Box<::std::any::Any> {
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn ::std::any::Any> {
         self
     }
 
@@ -3115,13 +3115,13 @@ impl ::protobuf::Message for Latency {
         &mut self.unknown_fields
     }
 
-    fn as_any(&self) -> &::std::any::Any {
-        self as &::std::any::Any
+    fn as_any(&self) -> &dyn ::std::any::Any {
+        self as &dyn ::std::any::Any
     }
-    fn as_any_mut(&mut self) -> &mut ::std::any::Any {
-        self as &mut ::std::any::Any
+    fn as_any_mut(&mut self) -> &mut dyn ::std::any::Any {
+        self as &mut dyn ::std::any::Any
     }
-    fn into_any(self: Box<Self>) -> ::std::boxed::Box<::std::any::Any> {
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn ::std::any::Any> {
         self
     }
 
@@ -3534,13 +3534,13 @@ impl ::protobuf::Message for NQuad {
         &mut self.unknown_fields
     }
 
-    fn as_any(&self) -> &::std::any::Any {
-        self as &::std::any::Any
+    fn as_any(&self) -> &dyn ::std::any::Any {
+        self as &dyn ::std::any::Any
     }
-    fn as_any_mut(&mut self) -> &mut ::std::any::Any {
-        self as &mut ::std::any::Any
+    fn as_any_mut(&mut self) -> &mut dyn ::std::any::Any {
+        self as &mut dyn ::std::any::Any
     }
-    fn into_any(self: Box<Self>) -> ::std::boxed::Box<::std::any::Any> {
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn ::std::any::Any> {
         self
     }
 
@@ -4302,13 +4302,13 @@ impl ::protobuf::Message for Value {
         &mut self.unknown_fields
     }
 
-    fn as_any(&self) -> &::std::any::Any {
-        self as &::std::any::Any
+    fn as_any(&self) -> &dyn ::std::any::Any {
+        self as &dyn ::std::any::Any
     }
-    fn as_any_mut(&mut self) -> &mut ::std::any::Any {
-        self as &mut ::std::any::Any
+    fn as_any_mut(&mut self) -> &mut dyn ::std::any::Any {
+        self as &mut dyn ::std::any::Any
     }
-    fn into_any(self: Box<Self>) -> ::std::boxed::Box<::std::any::Any> {
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn ::std::any::Any> {
         self
     }
 
@@ -4663,13 +4663,13 @@ impl ::protobuf::Message for Facet {
         &mut self.unknown_fields
     }
 
-    fn as_any(&self) -> &::std::any::Any {
-        self as &::std::any::Any
+    fn as_any(&self) -> &dyn ::std::any::Any {
+        self as &dyn ::std::any::Any
     }
-    fn as_any_mut(&mut self) -> &mut ::std::any::Any {
-        self as &mut ::std::any::Any
+    fn as_any_mut(&mut self) -> &mut dyn ::std::any::Any {
+        self as &mut dyn ::std::any::Any
     }
-    fn into_any(self: Box<Self>) -> ::std::boxed::Box<::std::any::Any> {
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn ::std::any::Any> {
         self
     }
 
@@ -5165,13 +5165,13 @@ impl ::protobuf::Message for SchemaNode {
         &mut self.unknown_fields
     }
 
-    fn as_any(&self) -> &::std::any::Any {
-        self as &::std::any::Any
+    fn as_any(&self) -> &dyn ::std::any::Any {
+        self as &dyn ::std::any::Any
     }
-    fn as_any_mut(&mut self) -> &mut ::std::any::Any {
-        self as &mut ::std::any::Any
+    fn as_any_mut(&mut self) -> &mut dyn ::std::any::Any {
+        self as &mut dyn ::std::any::Any
     }
-    fn into_any(self: Box<Self>) -> ::std::boxed::Box<::std::any::Any> {
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn ::std::any::Any> {
         self
     }
 
@@ -5454,13 +5454,13 @@ impl ::protobuf::Message for LoginRequest {
         &mut self.unknown_fields
     }
 
-    fn as_any(&self) -> &::std::any::Any {
-        self as &::std::any::Any
+    fn as_any(&self) -> &dyn ::std::any::Any {
+        self as &dyn ::std::any::Any
     }
-    fn as_any_mut(&mut self) -> &mut ::std::any::Any {
-        self as &mut ::std::any::Any
+    fn as_any_mut(&mut self) -> &mut dyn ::std::any::Any {
+        self as &mut dyn ::std::any::Any
     }
-    fn into_any(self: Box<Self>) -> ::std::boxed::Box<::std::any::Any> {
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn ::std::any::Any> {
         self
     }
 
@@ -5671,13 +5671,13 @@ impl ::protobuf::Message for Jwt {
         &mut self.unknown_fields
     }
 
-    fn as_any(&self) -> &::std::any::Any {
-        self as &::std::any::Any
+    fn as_any(&self) -> &dyn ::std::any::Any {
+        self as &dyn ::std::any::Any
     }
-    fn as_any_mut(&mut self) -> &mut ::std::any::Any {
-        self as &mut ::std::any::Any
+    fn as_any_mut(&mut self) -> &mut dyn ::std::any::Any {
+        self as &mut dyn ::std::any::Any
     }
-    fn into_any(self: Box<Self>) -> ::std::boxed::Box<::std::any::Any> {
+    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn ::std::any::Any> {
         self
     }
 
