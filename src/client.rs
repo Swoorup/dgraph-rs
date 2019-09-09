@@ -1,7 +1,7 @@
-use failure::Error;
 use rand::prelude::*;
 use std::sync::Mutex;
 
+use crate::errors::DgraphError;
 use crate::protos::api;
 use crate::protos::api_grpc;
 use crate::txn::Txn;
@@ -26,7 +26,7 @@ impl Dgraph {
         }
     }
 
-    pub fn login(&self, userid: String, password: String) -> Result<api::Response, Error> {
+    pub fn login(&self, userid: String, password: String) -> Result<api::Response, DgraphError> {
         let _guard = self
             .jwt
             .lock()
@@ -44,11 +44,15 @@ impl Dgraph {
         unimplemented!()
     }
 
-    pub fn retry_login(&self, userid: String, password: String) -> Result<api::Response, Error> {
+    pub fn retry_login(
+        &self,
+        userid: String,
+        password: String,
+    ) -> Result<api::Response, DgraphError> {
         unimplemented!()
     }
 
-    pub fn alter(&self, op: &api::Operation) -> Result<api::Payload, Error> {
+    pub fn alter(&self, op: &api::Operation) -> Result<api::Payload, DgraphError> {
         let dc = self.any_client().expect("Cannot alter. No client present");
         let res = dc.alter(op)?;
         Ok(res)
