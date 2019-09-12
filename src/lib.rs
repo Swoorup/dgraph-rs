@@ -1,6 +1,7 @@
 #![allow(unused_variables)]
 
 mod client;
+mod errors;
 mod protos;
 mod txn;
 
@@ -10,6 +11,7 @@ use std::sync::Arc;
 pub use grpcio;
 
 pub use client::Dgraph;
+pub use errors::DgraphError;
 pub use protos::api::*;
 pub use protos::api_grpc::*;
 pub use txn::Txn;

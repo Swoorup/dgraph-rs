@@ -1,6 +1,6 @@
-use failure::{bail, Error};
 use std::collections::HashMap;
 
+use crate::errors::DgraphError;
 use crate::protos::api;
 use crate::protos::api_grpc;
 
@@ -26,15 +26,15 @@ impl Txn<'_> {
     /// will ask the Dgraph Alpha to try to get timestamps from memory in a best
     /// effort to reduce the number of outbound requests to Zero. This may yield
     /// improved latencies in read-bound datasets. Returns the transaction itself.
-    pub fn best_effort(&mut self) -> Result<&Txn, Error> {
+    pub fn best_effort(&mut self) -> Result<&Txn, DgraphError> {
         if !self.read_only {
-            bail!("Best effort only works for read-only queries")
+            return Err(DgraphError::WriteTxnBestEffort);
         }
         self.best_effort = true;
         Ok(self)
     }
 
-    pub fn query(&mut self, query: impl Into<String>) -> Result<api::Response, Error> {
+    pub fn query(&mut self, query: impl Into<String>) -> Result<api::Response, DgraphError> {
         self.query_with_vars(query, HashMap::new())
     }
 
@@ -42,9 +42,9 @@ impl Txn<'_> {
         &mut self,
         query: impl Into<String>,
         vars: HashMap<String, String>,
-    ) -> Result<api::Response, Error> {
+    ) -> Result<api::Response, DgraphError> {
         if self.finished {
-            bail!("Transaction has already been committed or discarded");
+            return Err(DgraphError::TxnFinished);
         }
 
         let res = self.client.query(&api::Request {
@@ -57,7 +57,7 @@ impl Txn<'_> {
 
         let txn = match res.txn.as_ref() {
             Some(txn) => txn,
-            None => bail!("Got empty Txn response back from query"),
+            None => return Err(DgraphError::EmptyTxn),
         };
 
         self.merge_context(txn)?;
@@ -65,10 +65,10 @@ impl Txn<'_> {
         Ok(res)
     }
 
-    pub fn mutate(&mut self, mut mu: api::Mutation) -> Result<api::Assigned, Error> {
+    pub fn mutate(&mut self, mut mu: api::Mutation) -> Result<api::Assigned, DgraphError> {
         match (self.finished, self.read_only) {
-            (true, _) => bail!("Txn is finished"),
-            (_, true) => bail!("Txn is read only"),
+            (true, _) => return Err(DgraphError::TxnFinished),
+            (_, true) => return Err(DgraphError::TxnReadOnly),
             _ => (),
         }
 
@@ -81,7 +81,7 @@ impl Txn<'_> {
             Ok(mu_res) => mu_res,
             Err(e) => {
                 let _ = self.discard();
-                bail!(e);
+                return Err(DgraphError::GrpcError(e));
             }
         };
 
@@ -92,7 +92,7 @@ impl Txn<'_> {
         {
             let context = match mu_res.context.as_ref() {
                 Some(context) => context,
-                None => bail!("Missing Txn context on mutation response"),
+                None => return Err(DgraphError::MissingTxnContext),
             };
 
             self.merge_context(context)?;
@@ -101,22 +101,22 @@ impl Txn<'_> {
         Ok(mu_res)
     }
 
-    pub fn commit(mut self) -> Result<(), Error> {
+    pub fn commit(mut self) -> Result<(), DgraphError> {
         match (self.finished, self.read_only) {
-            (true, _) => bail!("Txn is finished"),
-            (_, true) => bail!("Txn is read only"),
+            (true, _) => return Err(DgraphError::TxnFinished),
+            (_, true) => return Err(DgraphError::TxnReadOnly),
             _ => (),
         }
 
         self.commit_or_abort()
     }
 
-    pub fn discard(&mut self) -> Result<(), Error> {
+    pub fn discard(&mut self) -> Result<(), DgraphError> {
         self.context.aborted = true;
         self.commit_or_abort()
     }
 
-    fn commit_or_abort(&mut self) -> Result<(), Error> {
+    fn commit_or_abort(&mut self) -> Result<(), DgraphError> {
         if self.finished {
             return Ok(());
         }
@@ -131,13 +131,13 @@ impl Txn<'_> {
         Ok(())
     }
 
-    fn merge_context(&mut self, src: &api::TxnContext) -> Result<(), Error> {
+    fn merge_context(&mut self, src: &api::TxnContext) -> Result<(), DgraphError> {
         if self.context.start_ts == 0 {
             self.context.start_ts = src.start_ts;
         }
 
         if self.context.start_ts != src.start_ts {
-            bail!("self.context.start_ts != src.start_ts")
+            return Err(DgraphError::StartTsMismatch);
         }
 
         for key in src.keys.iter() {

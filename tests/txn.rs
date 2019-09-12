@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use dgraph::make_dgraph;
+use dgraph::{make_dgraph, DgraphError};
 use serde_derive::{Deserialize, Serialize};
 use serde_json;
 
@@ -68,7 +68,11 @@ fn it_returns_error_if_mandatory_var_is_omitted() {
     let vars = HashMap::new();
     let resp = dgraph.new_readonly_txn().query_with_vars(query, vars);
 
-    assert_eq!(resp.is_err(), true);
+    let error_matched = match resp.unwrap_err() {
+        DgraphError::GrpcError(grpcio::Error::RpcFailure(_)) => true,
+        _ => false,
+    };
+    assert!(error_matched);
 }
 
 #[test]
@@ -99,7 +103,11 @@ fn it_returns_error_if_autocommited_mutation_is_commited_again() {
     txn.mutate(mutation).unwrap();
     let result = txn.commit();
 
-    assert_eq!(result.is_err(), true);
+    let error_matched = match result.unwrap_err() {
+        DgraphError::TxnFinished => true,
+        _ => false,
+    };
+    assert!(error_matched);
 }
 
 #[test]
@@ -112,7 +120,11 @@ fn it_does_not_allow_mutation_in_readonly_transaction() {
     mutation.set_set_json(br#"{"name": "Alice"}"#.to_vec());
     let result = txn.mutate(mutation);
 
-    assert_eq!(result.is_err(), true);
+    let error_matched = match result.unwrap_err() {
+        DgraphError::TxnReadOnly => true,
+        _ => false,
+    };
+    assert!(error_matched);
 }
 
 // #[test]
@@ -158,5 +170,9 @@ fn it_does_not_commit_discarded_transaction() {
     let _ = txn.discard();
     let result = txn.commit();
 
-    assert_eq!(result.is_err(), true);
+    let error_matched = match result.unwrap_err() {
+        DgraphError::TxnFinished => true,
+        _ => false,
+    };
+    assert!(error_matched);
 }
