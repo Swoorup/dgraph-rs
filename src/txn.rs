@@ -22,10 +22,10 @@ impl Drop for Txn<'_> {
 }
 
 impl Txn<'_> {
-    // best_effort enables best effort in read-only queries. Using this flag will ask the
-    // Dgraph Alpha to try to get timestamps from memory in a best effort to reduce the number of
-    // outbound requests to Zero. This may yield improved latencies in read-bound datasets.
-    // Returns the transaction itself.
+    /// `best_effort` enables best effort in read-only queries. Using this flag
+    /// will ask the Dgraph Alpha to try to get timestamps from memory in a best
+    /// effort to reduce the number of outbound requests to Zero. This may yield
+    /// improved latencies in read-bound datasets. Returns the transaction itself.
     pub fn best_effort(&mut self) -> Result<&Txn, DgraphError> {
         if !self.read_only {
             return Err(DgraphError::WriteTxnBestEffort);
