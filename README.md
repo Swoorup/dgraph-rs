@@ -25,6 +25,13 @@ with Dgraph.
   - [Run a query](#run-a-query)
   - [Commit a transaction](#commit-a-transaction)
 
+## Prerequisites
+
+Since this crate uses `grpcio`, which is a wrapper around C++ library, there are
+certain prerequisites needed before it can be installed. You can find them in
+[`grpcio` documentation](https://github.com/pingcap/grpc-rs#prerequisites).
+
+
 ## Install
 
 Dgraph-rs is available on crates.io. Add the following dependency to your
