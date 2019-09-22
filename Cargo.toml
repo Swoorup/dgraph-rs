@@ -1,6 +1,6 @@
 [package]
 name = "dgraph"
-version = "0.1.2"
+version = "0.2.0"
 authors = ["Swoorup Joshi"]
 description = "A rust client for Dgraph database"
 readme = "README.md"

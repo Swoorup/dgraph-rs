@@ -39,7 +39,7 @@ Cargo.toml
 
 ```toml
 [dependencies]
-dgraph = "0.1.1"
+dgraph = "0.2.0"
 ```
 
 ## Using a client
