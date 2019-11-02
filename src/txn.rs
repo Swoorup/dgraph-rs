@@ -65,40 +65,89 @@ impl Txn<'_> {
         Ok(res)
     }
 
-    pub fn mutate(&mut self, mut mu: api::Mutation) -> Result<api::Assigned, DgraphError> {
-        match (self.finished, self.read_only) {
-            (true, _) => return Err(DgraphError::TxnFinished),
-            (_, true) => return Err(DgraphError::TxnReadOnly),
-            _ => (),
-        }
+    cfg_if::cfg_if! {
+        if #[cfg(feature = "dgraph-1-0")] {
+            pub fn mutate(&mut self, mut mu: api::Mutation) -> Result<api::Assigned, DgraphError> {
+                match (self.finished, self.read_only) {
+                    (true, _) => return Err(DgraphError::TxnFinished),
+                    (_, true) => return Err(DgraphError::TxnReadOnly),
+                    _ => (),
+                }
 
-        self.mutated = true;
-        mu.start_ts = self.context.start_ts;
-        let commit_now = mu.commit_now;
-        let mu_res = self.client.mutate(&mu);
+                self.mutated = true;
+                mu.start_ts = self.context.start_ts;
+                let commit_now = mu.commit_now;
+                let mu_res = self.client.mutate(&mu);
 
-        let mu_res = match mu_res {
-            Ok(mu_res) => mu_res,
-            Err(e) => {
-                let _ = self.discard();
-                return Err(DgraphError::GrpcError(e));
+                let mu_res = match mu_res {
+                    Ok(mu_res) => mu_res,
+                    Err(e) => {
+                        let _ = self.discard();
+                        return Err(DgraphError::GrpcError(e));
+                    }
+                };
+
+                if commit_now {
+                    self.finished = true;
+                }
+
+                {
+                    let context = match mu_res.context.as_ref() {
+                        Some(context) => context,
+                        None => return Err(DgraphError::MissingTxnContext),
+                    };
+
+                    self.merge_context(context)?;
+                }
+
+                Ok(mu_res)
             }
-        };
+        } else if #[cfg(feature = "dgraph-1-1")] {
+            pub fn mutate(&mut self, mu: api::Mutation) -> Result<api::Response, DgraphError> {
+                let mut request = api::Request::new();
+                let mutations = vec![mu.clone()];
 
-        if commit_now {
-            self.finished = true;
+                request.set_mutations(mutations.into());
+                request.set_commit_now(mu.get_commit_now());
+
+                self.do_request(&mut request)
+            }
+
+            pub fn do_request(&mut self, request: &mut api::Request) -> Result<api::Response, DgraphError> {
+                let mutation_list = request.get_mutations();
+
+                if self.finished {
+                    return Err(DgraphError::TxnFinished);
+                }
+
+                if mutation_list.len() > 0 {
+                    if self.read_only {
+                        return Err(DgraphError::TxnReadOnly)
+                    }
+
+                    self.mutated = true;
+                }
+
+                request.set_start_ts(self.context.get_start_ts());
+
+                let response = match self.client.query(&request) {
+                    Ok(response) => response,
+                    Err(e) => {
+                        let _ = self.discard();
+
+                        return Err(DgraphError::GrpcError(e));
+                    },
+                };
+
+                if request.commit_now {
+                    self.finished = true;
+                }
+
+                self.merge_context(response.get_txn())?;
+
+                Ok(response)
+            }
         }
-
-        {
-            let context = match mu_res.context.as_ref() {
-                Some(context) => context,
-                None => return Err(DgraphError::MissingTxnContext),
-            };
-
-            self.merge_context(context)?;
-        }
-
-        Ok(mu_res)
     }
 
     pub fn commit(mut self) -> Result<(), DgraphError> {

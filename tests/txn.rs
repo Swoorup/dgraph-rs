@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use dgraph::{make_dgraph, DgraphError};
+use dgraph::{make_dgraph, DgraphError, Request};
 use serde_derive::{Deserialize, Serialize};
 use serde_json;
 
@@ -175,4 +175,96 @@ fn it_does_not_commit_discarded_transaction() {
         _ => false,
     };
     assert!(error_matched);
+}
+
+#[cfg(feature = "dgraph-1-1")]
+#[test]
+fn it_runs_query_through_do_request() {
+    let dgraph = make_dgraph!(dgraph::new_dgraph_client(common::DGRAPH_URL));
+
+    let uid = "0x1";
+    let query = format!(
+        r#"{{
+        uids(func: uid({})) {{
+            uid,
+        }}
+    }}"#,
+        uid
+    )
+    .to_string();
+    let mut request = Request {
+        query,
+        ..Default::default()
+    };
+
+    let resp = dgraph.new_readonly_txn().do_request(&mut request);
+    let json: UidJson = serde_json::from_slice(&resp.unwrap().json).unwrap();
+
+    assert_eq!(json.uids[0].uid, uid);
+}
+
+#[cfg(feature = "dgraph-1-1")]
+#[test]
+fn it_runs_query_and_mutation_without_variables_through_do_request() {
+    let dgraph = make_dgraph!(dgraph::new_dgraph_client(common::DGRAPH_URL));
+
+    let mut txn = dgraph.new_txn();
+    let uid = "0x1";
+    let query = format!(
+        r#"{{
+        uids(func: uid({})) {{
+            uid,
+        }}
+    }}"#,
+        uid
+    )
+    .to_string();
+    let mut mutation = dgraph::Mutation::new();
+    mutation.set_set_json(br#"{"name": "Alice"}"#.to_vec());
+
+    let mut request = Request {
+        query,
+        mutations: vec![mutation].into(),
+        ..Default::default()
+    };
+
+    let resp = txn.do_request(&mut request);
+    let result = txn.commit();
+
+    let error_matched = match resp.unwrap_err() {
+        DgraphError::GrpcError(grpcio::Error::RpcFailure(_)) => true,
+        _ => false,
+    };
+    assert!(error_matched);
+}
+
+#[cfg(feature = "dgraph-1-1")]
+#[test]
+fn it_runs_query_and_mutation_through_do_request() {
+    let dgraph = make_dgraph!(dgraph::new_dgraph_client(common::DGRAPH_URL));
+
+    let mut txn = dgraph.new_txn();
+    let uid = "0x1";
+    let query = format!(
+        r#"{{
+        u as var(func: uid({})) {{
+            uid,
+        }}
+    }}"#,
+        uid
+    )
+    .to_string();
+    let mut mutation = dgraph::Mutation::new();
+    mutation.set_set_nquads(br#"uid(u) <name> "Alice" ."#.to_vec());
+
+    let mut request = Request {
+        query,
+        mutations: vec![mutation].into(),
+        ..Default::default()
+    };
+
+    let _ = txn.do_request(&mut request);
+    let result = txn.commit();
+
+    assert!(result.is_ok());
 }
