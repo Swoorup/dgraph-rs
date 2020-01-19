@@ -1,11 +1,11 @@
 version: "3.2"
 services:
   zero:
-    image: dgraph/dgraph:v1.0.17
+    image: dgraph/dgraph:v1.1.1
     volumes:
       - type: volume
         source: dgraph
-        target: /dgraph
+        target: /dgraph-1-1
         volume:
           nocopy: true
     ports:
@@ -14,11 +14,11 @@ services:
     restart: on-failure
     command: dgraph zero --my=zero:5080
   server:
-    image: dgraph/dgraph:v1.0.17
+    image: dgraph/dgraph:v1.1.1
     volumes:
       - type: volume
         source: dgraph
-        target: /dgraph
+        target: /dgraph-1-1
         volume:
           nocopy: true
     ports:

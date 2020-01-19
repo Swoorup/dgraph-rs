@@ -13,9 +13,10 @@ edition = "2018"
 [dependencies]
 grpcio = "0.4.3"
 futures = "0.1.25"
-protobuf = "2.3.0"
+protobuf = "2.10.1"
 rand = "0.6.5"
-protoc-grpcio = { version = "1.0.1", optional = true }
+protoc-grpcio = { version = "1.1.0", optional = true }
+cfg-if = "0.1.10"
 
 [dev-dependencies]
 chrono = { version = "0.4.6", features = ["serde"] }
@@ -27,10 +28,19 @@ slog-term = "2.4.0"
 slog-scope = "4.1.1"
 
 [features]
+default = ["dgraph-1-0"]
+dgraph-1-0 = []
+dgraph-1-1 = []
 compile-protobufs = ["protoc-grpcio"]
 
 [[bin]]
 doc = false
-name = "protoc"
-path = "compile-protobufs.rs"
+name = "protoc-1-0"
+path = "compile-protobufs-1-0.rs"
+required-features = ["compile-protobufs"]
+
+[[bin]]
+doc = false
+name = "protoc-1-1"
+path = "compile-protobufs-1-1.rs"
 required-features = ["compile-protobufs"]

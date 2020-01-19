@@ -1,22 +1,30 @@
 language: rust
 services:
   - docker
-rust:
-  - stable
-  - beta
-  - nightly
-
-before_install:
-  - rustup component add clippy rustfmt
-  - docker-compose up -d
-  - docker ps
-
-script:
-  - cargo clippy -- -D warnings
-  - cargo fmt -- --check
-  - cargo test --verbose -- --test-threads=1
 
 matrix:
   allow_failures:
     - rust: nightly
   fast_finish: true
+  include:
+    - name: clippy & fmt
+      rust: stable
+      before_install:
+        - rustup component add rustfmt clippy
+      script:
+        - cargo clippy --all-features -- -D warnings
+        - cargo fmt -- --check
+    - name: Dgraph 1.0 tests
+      rust: stable
+      before_install:
+        - docker-compose -f docker-compose-1-0.yaml up -d
+        - docker ps
+      script:
+        - cargo test --verbose -- --test-threads=1
+    - name: Dgraph 1.1 tests
+      rust: stable
+      before_install:
+        - docker-compose -f docker-compose-1-1.yaml up -d
+        - docker ps
+      script:
+        - cargo test --no-default-features --features dgraph-1-1 --verbose -- --test-threads=1
