@@ -38,7 +38,7 @@ certain prerequisites needed before it can be installed. You can find them in
 
 ```toml
 [dependencies]
-dgraph = "0.2.0"
+dgraph = "0.3.0"
 ```
 
 `dgraph` is available for both Dgraph 1.0 and 1.1. By default, it installs
