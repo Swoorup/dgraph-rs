@@ -14,7 +14,7 @@ with Dgraph.
 
 ## Table of contents
 
-- [Install](#install)
+- [Installation](#install)
 - [Using a client](#using-a-client)
   - [Create a client](#create-a-client)
   - [Alter the database](#alter-the-database)
@@ -22,6 +22,8 @@ with Dgraph.
   - [Run a mutation](#run-a-mutation)
   - [Run a query](#run-a-query)
   - [Commit a transaction](#commit-a-transaction)
+- [Integration tests](#integration-tests)
+- [Contributing](#contributing)
 
 ## Prerequisites
 
@@ -40,15 +42,15 @@ dgraph = "0.2.0"
 ```
 
 `dgraph` is available for both Dgraph 1.0 and 1.1. By default, it installs
-with support for version 1.0. If you are using 1.1, you have to use a feature
+with support for version 1.0. If you are using 1.1+, you have to use a feature
 flag:
 
-````toml
+```toml
 [dependencies]
-dgraph = { version = "0.2.0", default-features = false, features = ["dgraph-1-1"]}
+dgraph = { version = "0.2.0", default-features = false, features = ["dgraph-1-1"] }
 ```
 
-This most likely changes in the future and support for 1.1 will be dropped.
+This most likely changes in the future and support for 1.0 will be dropped.
 
 ## Using a client
 
@@ -63,7 +65,7 @@ The following code snippet shows just one connection.
 
 ```rust
 let dgraph = make_dgraph!(dgraph::new_dgraph_client("localhost:9080"));
-````
+```
 
 Alternatively, secure client can be used:
 
