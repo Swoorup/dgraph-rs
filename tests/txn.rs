@@ -23,10 +23,10 @@ fn it_runs_simple_query() {
     let uid = "0x1";
     let query = format!(
         r#"{{
-        uids(func: uid({})) {{
-            uid,
-        }}
-    }}"#,
+            uids(func: uid({})) {{
+                uid,
+            }}
+        }}"#,
         uid
     )
     .to_string();
@@ -185,10 +185,10 @@ fn it_runs_query_through_do_request() {
     let uid = "0x1";
     let query = format!(
         r#"{{
-        uids(func: uid({})) {{
-            uid,
-        }}
-    }}"#,
+            uids(func: uid({})) {{
+                uid,
+            }}
+        }}"#,
         uid
     )
     .to_string();
@@ -212,10 +212,10 @@ fn it_runs_query_and_mutation_without_variables_through_do_request() {
     let uid = "0x1";
     let query = format!(
         r#"{{
-        uids(func: uid({})) {{
-            uid,
-        }}
-    }}"#,
+            uids(func: uid({})) {{
+                uid,
+            }}
+        }}"#,
         uid
     )
     .to_string();
@@ -231,11 +231,7 @@ fn it_runs_query_and_mutation_without_variables_through_do_request() {
     let resp = txn.do_request(&mut request);
     let result = txn.commit();
 
-    let error_matched = match resp.unwrap_err() {
-        DgraphError::GrpcError(grpcio::Error::RpcFailure(_)) => true,
-        _ => false,
-    };
-    assert!(error_matched);
+    assert!(result.is_ok());
 }
 
 #[cfg(feature = "dgraph-1-1")]
@@ -247,10 +243,10 @@ fn it_runs_query_and_mutation_through_do_request() {
     let uid = "0x1";
     let query = format!(
         r#"{{
-        u as var(func: uid({})) {{
-            uid,
-        }}
-    }}"#,
+            u as var(func: uid({})) {{
+                uid,
+            }}
+        }}"#,
         uid
     )
     .to_string();
