@@ -38,7 +38,7 @@ certain prerequisites needed before it can be installed. You can find them in
 
 ```toml
 [dependencies]
-dgraph = "0.3.0"
+dgraph = "0.3.1"
 ```
 
 `dgraph` is available for both Dgraph 1.0 and 1.1. By default, it installs
@@ -47,7 +47,7 @@ flag:
 
 ```toml
 [dependencies]
-dgraph = { version = "0.2.0", default-features = false, features = ["dgraph-1-1"] }
+dgraph = { version = "0.3.1", default-features = false, features = ["dgraph-1-1"] }
 ```
 
 This most likely changes in the future and support for 1.0 will be dropped.
