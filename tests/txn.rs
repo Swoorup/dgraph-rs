@@ -1,6 +1,8 @@
 use std::collections::HashMap;
 
-use dgraph::{make_dgraph, DgraphError, Request};
+#[cfg(feature = "dgraph-1-1")]
+use dgraph::Request;
+use dgraph::{make_dgraph, DgraphError};
 use serde_derive::{Deserialize, Serialize};
 use serde_json;
 
@@ -28,8 +30,7 @@ fn it_runs_simple_query() {
             }}
         }}"#,
         uid
-    )
-    .to_string();
+    );
     let resp = dgraph.new_readonly_txn().query(query);
     let json: UidJson = serde_json::from_slice(&resp.unwrap().json).unwrap();
 
