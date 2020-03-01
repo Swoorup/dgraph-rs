@@ -76,6 +76,27 @@ fn it_returns_error_if_mandatory_var_is_omitted() {
 }
 
 #[test]
+fn it_runs_multiple_queries_in_a_single_transaction() {
+    let dgraph = make_dgraph!(dgraph::new_dgraph_client(common::DGRAPH_URL));
+
+    let uid = "0x1";
+    let query = format!(
+        r#"{{
+            uids(func: uid({})) {{
+                uid,
+            }}
+        }}"#,
+        uid
+    );
+    let mut txn = dgraph.new_readonly_txn();
+    let resp1 = txn.query(&query);
+    let resp2 = txn.query(query);
+
+    assert!(resp1.is_ok());
+    assert!(resp2.is_ok());
+}
+
+#[test]
 fn it_commits_a_mutation() {
     let dgraph = make_dgraph!(dgraph::new_dgraph_client(common::DGRAPH_URL));
 

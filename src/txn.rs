@@ -49,6 +49,7 @@ impl Txn<'_> {
 
         let res = self.client.query(&api::Request {
             query: query.into(),
+            start_ts: self.context.start_ts,
             vars,
             read_only: self.read_only,
             best_effort: self.best_effort,
