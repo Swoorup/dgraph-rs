@@ -153,7 +153,7 @@ fn open_cert_file(path: &str) -> Vec<u8> {
         let mut contents = String::new();
         reader
             .read_to_string(&mut contents)
-            .expect(&format!("Read contents of file {} into string.", path));
+            .unwrap_or_else(|_| panic!("Read contents of file {} into string.", path));
 
         contents.into_bytes()
     } else {
