@@ -1,7 +1,7 @@
 // This file is generated. Do not edit
 // @generated
 
-// https://github.com/Manishearth/rust-clippy/issues/702
+// https://github.com/rust-lang/rust-clippy/issues/702
 #![allow(unknown_lints)]
 #![allow(clippy::all)]
 
@@ -203,7 +203,7 @@ pub fn create_dgraph<S: Dgraph + Send + Clone + 'static>(s: S) -> ::grpcio::Serv
     builder = builder.add_unary_handler(&METHOD_DGRAPH_COMMIT_OR_ABORT, move |ctx, req, resp| {
         instance.commit_or_abort(ctx, req, resp)
     });
-    let mut instance = s.clone();
+    let mut instance = s;
     builder = builder.add_unary_handler(&METHOD_DGRAPH_CHECK_VERSION, move |ctx, req, resp| {
         instance.check_version(ctx, req, resp)
     });
