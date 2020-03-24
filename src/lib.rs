@@ -1,5 +1,3 @@
-#![allow(unused_variables)]
-
 mod client;
 mod errors;
 mod protos;

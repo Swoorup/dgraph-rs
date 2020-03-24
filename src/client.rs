@@ -39,15 +39,15 @@ impl Dgraph {
             ..Default::default()
         };
 
-        let res = dc.login(&login_request)?;
+        let _res = dc.login(&login_request)?;
 
         unimplemented!()
     }
 
     pub fn retry_login(
         &self,
-        userid: String,
-        password: String,
+        _userid: String,
+        _password: String,
     ) -> Result<api::Response, DgraphError> {
         unimplemented!()
     }
