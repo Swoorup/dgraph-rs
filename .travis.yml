@@ -28,3 +28,10 @@ matrix:
         - docker ps
       script:
         - cargo test --no-default-features --features dgraph-1-1 --verbose -- --test-threads=1
+    - name: Dgraph 1.2 tests
+      rust: stable
+      before_install:
+        - docker-compose -f docker-compose-1-2.yaml up -d
+        - docker ps
+      script:
+        - cargo test --no-default-features --features dgraph-1-1 --verbose -- --test-threads=1

@@ -1,0 +1,31 @@
+version: "3.2"
+services:
+  zero:
+    image: dgraph/dgraph:v1.2.2
+    volumes:
+      - type: volume
+        source: dgraph
+        target: /dgraph-1-1
+        volume:
+          nocopy: true
+    ports:
+      - 15080:5080
+      - 16080:6080
+    restart: on-failure
+    command: dgraph zero --my=zero:5080
+  server:
+    image: dgraph/dgraph:v1.2.2
+    volumes:
+      - type: volume
+        source: dgraph
+        target: /dgraph-1-1
+        volume:
+          nocopy: true
+    ports:
+      - 18080:8080
+      - 19080:9080
+    restart: on-failure
+    command: dgraph alpha --my=server:7080 --lru_mb=2048 --zero=zero:5080
+
+volumes:
+  dgraph:
