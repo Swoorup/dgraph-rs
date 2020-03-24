@@ -1,9 +1,8 @@
+use std::collections::HashMap;
+
 use chrono::prelude::*;
 use dgraph::{make_dgraph, Dgraph};
 use serde_derive::{Deserialize, Serialize};
-use slog::{slog_info, slog_o, Drain};
-use slog_scope::info;
-use std::collections::HashMap;
 
 #[derive(Serialize, Deserialize, Default, Debug)]
 pub struct Root {
@@ -104,14 +103,14 @@ fn create_data(dgraph: &Dgraph) {
     // Assigned#getUidsMap() returns a map from blank node names to uids.
     // For a json mutation, blank node names "blank-0", "blank-1", ... are used
     // for all the created nodes.
-    info!(
+    println!(
         "Created person named 'Alice' with uid = {}",
         assigned.uids["blank-0"]
     );
 
-    info!("All created nodes (map from blank node names to uids):");
+    println!("All created nodes (map from blank node names to uids):");
     for (key, val) in assigned.uids.iter() {
-        info!("\t{} => {}", key, val);
+        println!("\t{} => {}", key, val);
     }
 }
 
@@ -142,35 +141,23 @@ fn query_data(dgraph: &Dgraph) {
         .query_with_vars(query, vars)
         .expect("query");
     let root: Root = serde_json::from_slice(&resp.json).expect("parsing");
-    info!("Root: {:#?}", root);
-}
-
-fn run_example() {
-    info!("connect to dgraph via grpc at localhost:9080");
-
-    let dgraph = make_dgraph!(dgraph::new_dgraph_client("localhost:9080"));
-
-    info!("dropping all schema");
-    drop_all(&dgraph);
-
-    info!("setup schema");
-    set_schema(&dgraph);
-
-    info!("push data");
-    create_data(&dgraph);
-
-    info!("query");
-    query_data(&dgraph);
+    println!("Root: {:#?}", root);
 }
 
 fn main() {
-    let plain = slog_term::PlainSyncDecorator::new(std::io::stdout());
-    let log = slog::Logger::root(slog_term::FullFormat::new(plain).build().fuse(), slog_o!());
+    println!("connect to dgraph via grpc at localhost:9080");
 
-    // Make sure to save the guard, see documentation for more information
-    let _guard = slog_scope::set_global_logger(log);
-    slog_scope::scope(
-        &slog_scope::logger().new(slog_o!("scope" => "1")),
-        run_example,
-    );
+    let dgraph = make_dgraph!(dgraph::new_dgraph_client("localhost:19080"));
+
+    println!("dropping all schema");
+    drop_all(&dgraph);
+
+    println!("setup schema");
+    set_schema(&dgraph);
+
+    println!("push data");
+    create_data(&dgraph);
+
+    println!("query");
+    query_data(&dgraph);
 }
