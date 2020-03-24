@@ -250,7 +250,7 @@ fn it_runs_query_and_mutation_without_variables_through_do_request() {
         ..Default::default()
     };
 
-    let resp = txn.do_request(&mut request);
+    txn.do_request(&mut request).expect("Failed to do request.");
     let result = txn.commit();
 
     assert!(result.is_ok());
