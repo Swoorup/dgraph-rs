@@ -249,3 +249,19 @@ or this one in case of Dgraph 1.1 protobufs:
 ```bash
 cargo run --features="compile-protobufs" --bin protoc-1-1
 ```
+
+## Release checklist
+
+These have to be done with both Dgraph 1.0 and Dgraph 1.1+:
+
+- Run tests
+- Try examples
+
+Update the version and publish crate:
+
+- Update tag in Cargo.toml
+- Update tag in README.md
+- `git tag v0.X.X`
+- `git push origin v0.X.X`
+- Write release log on GitHub
+- `cargo publish`
