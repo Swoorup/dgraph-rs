@@ -16,7 +16,7 @@ pub enum DgraphError {
 }
 
 impl Error for DgraphError {
-    fn cause(&self) -> Option<&dyn Error> {
+    fn source(&self) -> Option<&(dyn Error + 'static)> {
         match self {
             DgraphError::GrpcError(grpc_error) => Some(grpc_error),
             _ => None,
