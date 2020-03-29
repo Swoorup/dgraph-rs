@@ -17,6 +17,7 @@ protobuf = "2.11.0"
 rand = "0.6.5"
 protoc-grpcio = { version = "1.1.0", optional = true }
 cfg-if = "0.1.10"
+log = "0.4.8"
 
 [dev-dependencies]
 chrono = { version = "0.4.6", features = ["serde"] }

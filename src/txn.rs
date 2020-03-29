@@ -84,7 +84,18 @@ impl Txn<'_> {
                     Ok(mu_res) => mu_res,
                     Err(e) => {
                         let _ = self.discard();
-                        return Err(DgraphError::GrpcError(e));
+
+                        if let grpcio::Error::RpcFailure(rpc_status) = &e {
+                            if rpc_status.status == grpcio::RpcStatusCode::UNIMPLEMENTED {
+                                log::warn!(
+                                    "Unknown gRPC method. This might mean that you are using \
+                                    Dgraph 1.1+. If this is the case, install this crate with \
+                                    `--no-default-features --features dgraph-1-1`."
+                                );
+                            }
+                        }
+
+                        return Err(e.into());
                     }
                 };
 
