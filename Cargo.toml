@@ -11,7 +11,7 @@ homepage = "https://github.com/Swoorup/dgraph-rs"
 edition = "2018"
 
 [dependencies]
-grpcio = "0.5.0"
+grpcio = "0.5.1"
 futures = "0.1.25"
 protobuf = "2.11.0"
 rand = "0.6.5"
