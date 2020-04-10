@@ -93,7 +93,7 @@ To set the schema, create an instance of `dgraph::Operation` and use the
 
 ```rust
 let op = dgraph::Operation{
-  Schema: "name: string @index(exact) .", ..Default::default()
+  schema: "name: string @index(exact) .".to_string(), ..Default::default()
 };
 let result = dgraph.alter(&op);
 // Check error
