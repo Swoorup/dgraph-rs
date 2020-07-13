@@ -31,6 +31,8 @@ default = ["dgraph-1-0"]
 dgraph-1-0 = []
 dgraph-1-1 = []
 compile-protobufs = ["protoc-grpcio"]
+openssl = ["grpcio/openssl"]
+openssl-vendored = ["grpcio/openssl-vendored"]
 
 [[bin]]
 doc = false
