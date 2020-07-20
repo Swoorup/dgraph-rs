@@ -11,20 +11,20 @@ homepage = "https://github.com/Swoorup/dgraph-rs"
 edition = "2018"
 
 [dependencies]
-grpcio = "0.5.1"
-futures = "0.1.25"
-protobuf = "2.11.0"
-rand = "0.6.5"
-protoc-grpcio = { version = "1.1.0", optional = true }
+grpcio = "0.6.0"
+futures = "0.3.5"
+protobuf = "2.16.2"
+rand = "0.7.2"
+protoc-grpcio = { version = "2.0.0", optional = true }
 cfg-if = "0.1.10"
-log = "0.4.8"
+log = "0.4.11"
 
 [dev-dependencies]
-chrono = { version = "0.4.6", features = ["serde"] }
-serde = "1.0.87"
-serde_derive = "1.0.87"
-serde_json = "1.0.38"
-geojson = "0.18.0"
+chrono = { version = "0.4.13", features = ["serde"] }
+serde = "1.0.114"
+serde_derive = "1.0.114"
+serde_json = "1.0.56"
+geojson = "0.19.0"
 
 [features]
 default = ["dgraph-1-0"]
