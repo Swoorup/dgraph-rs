@@ -1,5 +1,6 @@
 # A rust client for dgraph
 
+[![crates.io version](https://img.shields.io/crates/v/dgraph.svg)](https://crates.io/crates/dgraph)
 [![Build Status](https://travis-ci.org/Swoorup/dgraph-rs.svg?branch=master)](https://travis-ci.org/Swoorup/dgraph-rs)
 
 Dgraph Rust client which communicates with the server using
