@@ -55,3 +55,15 @@ matrix:
           export GOROOT=$HOME/go;
       script:
         - cargo test --no-default-features --features dgraph-1-1 --verbose -- --test-threads=1
+    - name: Dgraph 20.03 tests
+      rust: stable
+      before_install:
+        - docker-compose -f docker-compose-20-03.yaml up -d
+        - docker ps
+      install:
+        - wget https://dl.google.com/go/go1.14.1.linux-amd64.tar.gz;
+          tar -xf go1.14.1.linux-amd64.tar.gz -C $HOME;
+          export PATH="$HOME/go/bin:$PATH";
+          export GOROOT=$HOME/go;
+      script:
+        - cargo test --no-default-features --features dgraph-1-1 --verbose -- --test-threads=1

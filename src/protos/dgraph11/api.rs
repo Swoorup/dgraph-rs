@@ -472,11 +472,182 @@ impl ::protobuf::reflect::ProtobufValue for Request {
 }
 
 #[derive(PartialEq, Clone, Default)]
+pub struct Uids {
+    // message fields
+    pub uids: ::protobuf::RepeatedField<::std::string::String>,
+    // special fields
+    pub unknown_fields: ::protobuf::UnknownFields,
+    pub cached_size: ::protobuf::CachedSize,
+}
+
+impl<'a> ::std::default::Default for &'a Uids {
+    fn default() -> &'a Uids {
+        <Uids as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl Uids {
+    pub fn new() -> Uids {
+        ::std::default::Default::default()
+    }
+
+    // repeated string uids = 1;
+
+    pub fn get_uids(&self) -> &[::std::string::String] {
+        &self.uids
+    }
+    pub fn clear_uids(&mut self) {
+        self.uids.clear();
+    }
+
+    // Param is passed by value, moved
+    pub fn set_uids(&mut self, v: ::protobuf::RepeatedField<::std::string::String>) {
+        self.uids = v;
+    }
+
+    // Mutable pointer to the field.
+    pub fn mut_uids(&mut self) -> &mut ::protobuf::RepeatedField<::std::string::String> {
+        &mut self.uids
+    }
+
+    // Take field
+    pub fn take_uids(&mut self) -> ::protobuf::RepeatedField<::std::string::String> {
+        ::std::mem::replace(&mut self.uids, ::protobuf::RepeatedField::new())
+    }
+}
+
+impl ::protobuf::Message for Uids {
+    fn is_initialized(&self) -> bool {
+        true
+    }
+
+    fn merge_from(
+        &mut self,
+        is: &mut ::protobuf::CodedInputStream<'_>,
+    ) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
+                1 => {
+                    ::protobuf::rt::read_repeated_string_into(wire_type, is, &mut self.uids)?;
+                }
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(
+                        field_number,
+                        wire_type,
+                        is,
+                        self.mut_unknown_fields(),
+                    )?;
+                }
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        for value in &self.uids {
+            my_size += ::protobuf::rt::string_size(1, &value);
+        }
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(
+        &self,
+        os: &mut ::protobuf::CodedOutputStream<'_>,
+    ) -> ::protobuf::ProtobufResult<()> {
+        for v in &self.uids {
+            os.write_string(1, &v)?;
+        }
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &dyn (::std::any::Any) {
+        self as &dyn (::std::any::Any)
+    }
+    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
+        self as &mut dyn (::std::any::Any)
+    }
+    fn into_any(self: ::std::boxed::Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        Self::descriptor_static()
+    }
+
+    fn new() -> Uids {
+        Uids::new()
+    }
+
+    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
+        static descriptor: ::protobuf::rt::LazyV2<::protobuf::reflect::MessageDescriptor> =
+            ::protobuf::rt::LazyV2::INIT;
+        descriptor.get(|| {
+            let mut fields = ::std::vec::Vec::new();
+            fields.push(
+                ::protobuf::reflect::accessor::make_repeated_field_accessor::<
+                    _,
+                    ::protobuf::types::ProtobufTypeString,
+                >("uids", |m: &Uids| &m.uids, |m: &mut Uids| &mut m.uids),
+            );
+            ::protobuf::reflect::MessageDescriptor::new_pb_name::<Uids>(
+                "Uids",
+                fields,
+                file_descriptor_proto(),
+            )
+        })
+    }
+
+    fn default_instance() -> &'static Uids {
+        static instance: ::protobuf::rt::LazyV2<Uids> = ::protobuf::rt::LazyV2::INIT;
+        instance.get(Uids::new)
+    }
+}
+
+impl ::protobuf::Clear for Uids {
+    fn clear(&mut self) {
+        self.uids.clear();
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for Uids {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for Uids {
+    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
+        ::protobuf::reflect::ReflectValueRef::Message(self)
+    }
+}
+
+#[derive(PartialEq, Clone, Default)]
 pub struct Response {
     // message fields
     pub json: ::std::vec::Vec<u8>,
     pub txn: ::protobuf::SingularPtrField<TxnContext>,
     pub latency: ::protobuf::SingularPtrField<Latency>,
+    pub metrics: ::protobuf::SingularPtrField<Metrics>,
     pub uids: ::std::collections::HashMap<::std::string::String, ::std::string::String>,
     // special fields
     pub unknown_fields: ::protobuf::UnknownFields,
@@ -587,6 +758,40 @@ impl Response {
         self.latency.take().unwrap_or_else(|| Latency::new())
     }
 
+    // .api.Metrics metrics = 4;
+
+    pub fn get_metrics(&self) -> &Metrics {
+        self.metrics
+            .as_ref()
+            .unwrap_or_else(|| <Metrics as ::protobuf::Message>::default_instance())
+    }
+    pub fn clear_metrics(&mut self) {
+        self.metrics.clear();
+    }
+
+    pub fn has_metrics(&self) -> bool {
+        self.metrics.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_metrics(&mut self, v: Metrics) {
+        self.metrics = ::protobuf::SingularPtrField::some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_metrics(&mut self) -> &mut Metrics {
+        if self.metrics.is_none() {
+            self.metrics.set_default();
+        }
+        self.metrics.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_metrics(&mut self) -> Metrics {
+        self.metrics.take().unwrap_or_else(|| Metrics::new())
+    }
+
     // repeated .api.Response.UidsEntry uids = 12;
 
     pub fn get_uids(
@@ -633,6 +838,11 @@ impl ::protobuf::Message for Response {
                 return false;
             }
         }
+        for v in &self.metrics {
+            if !v.is_initialized() {
+                return false;
+            }
+        }
         true
     }
 
@@ -651,6 +861,9 @@ impl ::protobuf::Message for Response {
                 }
                 3 => {
                     ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.latency)?;
+                }
+                4 => {
+                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.metrics)?;
                 }
                 12 => {
                     ::protobuf::rt::read_map_into::<
@@ -686,6 +899,10 @@ impl ::protobuf::Message for Response {
             let len = v.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         }
+        if let Some(ref v) = self.metrics.as_ref() {
+            let len = v.compute_size();
+            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
+        }
         my_size += ::protobuf::rt::compute_map_size::<
             ::protobuf::types::ProtobufTypeString,
             ::protobuf::types::ProtobufTypeString,
@@ -709,6 +926,11 @@ impl ::protobuf::Message for Response {
         }
         if let Some(ref v) = self.latency.as_ref() {
             os.write_tag(3, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_raw_varint32(v.get_cached_size())?;
+            v.write_to_with_cached_sizes(os)?;
+        }
+        if let Some(ref v) = self.metrics.as_ref() {
+            os.write_tag(4, ::protobuf::wire_format::WireTypeLengthDelimited)?;
             os.write_raw_varint32(v.get_cached_size())?;
             v.write_to_with_cached_sizes(os)?;
         }
@@ -779,6 +1001,16 @@ impl ::protobuf::Message for Response {
                     |m: &mut Response| &mut m.latency,
                 ),
             );
+            fields.push(
+                ::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<
+                    _,
+                    ::protobuf::types::ProtobufTypeMessage<Metrics>,
+                >(
+                    "metrics",
+                    |m: &Response| &m.metrics,
+                    |m: &mut Response| &mut m.metrics,
+                ),
+            );
             fields.push(::protobuf::reflect::accessor::make_map_accessor::<
                 _,
                 ::protobuf::types::ProtobufTypeString,
@@ -807,6 +1039,7 @@ impl ::protobuf::Clear for Response {
         self.json.clear();
         self.txn.clear();
         self.latency.clear();
+        self.metrics.clear();
         self.uids.clear();
         self.unknown_fields.clear();
     }
@@ -1338,6 +1571,7 @@ pub struct Operation {
     pub drop_all: bool,
     pub drop_op: Operation_DropOp,
     pub drop_value: ::std::string::String,
+    pub run_in_background: bool,
     // special fields
     pub unknown_fields: ::protobuf::UnknownFields,
     pub cached_size: ::protobuf::CachedSize,
@@ -1456,6 +1690,20 @@ impl Operation {
     pub fn take_drop_value(&mut self) -> ::std::string::String {
         ::std::mem::replace(&mut self.drop_value, ::std::string::String::new())
     }
+
+    // bool run_in_background = 6;
+
+    pub fn get_run_in_background(&self) -> bool {
+        self.run_in_background
+    }
+    pub fn clear_run_in_background(&mut self) {
+        self.run_in_background = false;
+    }
+
+    // Param is passed by value, moved
+    pub fn set_run_in_background(&mut self, v: bool) {
+        self.run_in_background = v;
+    }
 }
 
 impl ::protobuf::Message for Operation {
@@ -1507,6 +1755,15 @@ impl ::protobuf::Message for Operation {
                         &mut self.drop_value,
                     )?;
                 }
+                6 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(
+                            wire_type,
+                        ));
+                    }
+                    let tmp = is.read_bool()?;
+                    self.run_in_background = tmp;
+                }
                 _ => {
                     ::protobuf::rt::read_unknown_or_skip_group(
                         field_number,
@@ -1539,6 +1796,9 @@ impl ::protobuf::Message for Operation {
         if !self.drop_value.is_empty() {
             my_size += ::protobuf::rt::string_size(5, &self.drop_value);
         }
+        if self.run_in_background != false {
+            my_size += 2;
+        }
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
         self.cached_size.set(my_size);
         my_size
@@ -1562,6 +1822,9 @@ impl ::protobuf::Message for Operation {
         }
         if !self.drop_value.is_empty() {
             os.write_string(5, &self.drop_value)?;
+        }
+        if self.run_in_background != false {
+            os.write_bool(6, self.run_in_background)?;
         }
         os.write_unknown_fields(self.get_unknown_fields())?;
         ::std::result::Result::Ok(())
@@ -1642,6 +1905,14 @@ impl ::protobuf::Message for Operation {
                 |m: &Operation| &m.drop_value,
                 |m: &mut Operation| &mut m.drop_value,
             ));
+            fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<
+                _,
+                ::protobuf::types::ProtobufTypeBool,
+            >(
+                "run_in_background",
+                |m: &Operation| &m.run_in_background,
+                |m: &mut Operation| &mut m.run_in_background,
+            ));
             ::protobuf::reflect::MessageDescriptor::new_pb_name::<Operation>(
                 "Operation",
                 fields,
@@ -1663,6 +1934,7 @@ impl ::protobuf::Clear for Operation {
         self.drop_all = false;
         self.drop_op = Operation_DropOp::NONE;
         self.drop_value.clear();
+        self.run_in_background = false;
         self.unknown_fields.clear();
     }
 }
@@ -2564,6 +2836,7 @@ pub struct Latency {
     pub processing_ns: u64,
     pub encoding_ns: u64,
     pub assign_timestamp_ns: u64,
+    pub total_ns: u64,
     // special fields
     pub unknown_fields: ::protobuf::UnknownFields,
     pub cached_size: ::protobuf::CachedSize,
@@ -2635,6 +2908,20 @@ impl Latency {
     pub fn set_assign_timestamp_ns(&mut self, v: u64) {
         self.assign_timestamp_ns = v;
     }
+
+    // uint64 total_ns = 5;
+
+    pub fn get_total_ns(&self) -> u64 {
+        self.total_ns
+    }
+    pub fn clear_total_ns(&mut self) {
+        self.total_ns = 0;
+    }
+
+    // Param is passed by value, moved
+    pub fn set_total_ns(&mut self, v: u64) {
+        self.total_ns = v;
+    }
 }
 
 impl ::protobuf::Message for Latency {
@@ -2685,6 +2972,15 @@ impl ::protobuf::Message for Latency {
                     let tmp = is.read_uint64()?;
                     self.assign_timestamp_ns = tmp;
                 }
+                5 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(
+                            wire_type,
+                        ));
+                    }
+                    let tmp = is.read_uint64()?;
+                    self.total_ns = tmp;
+                }
                 _ => {
                     ::protobuf::rt::read_unknown_or_skip_group(
                         field_number,
@@ -2730,6 +3026,13 @@ impl ::protobuf::Message for Latency {
                 ::protobuf::wire_format::WireTypeVarint,
             );
         }
+        if self.total_ns != 0 {
+            my_size += ::protobuf::rt::value_size(
+                5,
+                self.total_ns,
+                ::protobuf::wire_format::WireTypeVarint,
+            );
+        }
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
         self.cached_size.set(my_size);
         my_size
@@ -2750,6 +3053,9 @@ impl ::protobuf::Message for Latency {
         }
         if self.assign_timestamp_ns != 0 {
             os.write_uint64(4, self.assign_timestamp_ns)?;
+        }
+        if self.total_ns != 0 {
+            os.write_uint64(5, self.total_ns)?;
         }
         os.write_unknown_fields(self.get_unknown_fields())?;
         ::std::result::Result::Ok(())
@@ -2822,6 +3128,14 @@ impl ::protobuf::Message for Latency {
                 |m: &Latency| &m.assign_timestamp_ns,
                 |m: &mut Latency| &mut m.assign_timestamp_ns,
             ));
+            fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<
+                _,
+                ::protobuf::types::ProtobufTypeUint64,
+            >(
+                "total_ns",
+                |m: &Latency| &m.total_ns,
+                |m: &mut Latency| &mut m.total_ns,
+            ));
             ::protobuf::reflect::MessageDescriptor::new_pb_name::<Latency>(
                 "Latency",
                 fields,
@@ -2842,6 +3156,7 @@ impl ::protobuf::Clear for Latency {
         self.processing_ns = 0;
         self.encoding_ns = 0;
         self.assign_timestamp_ns = 0;
+        self.total_ns = 0;
         self.unknown_fields.clear();
     }
 }
@@ -2853,6 +3168,184 @@ impl ::std::fmt::Debug for Latency {
 }
 
 impl ::protobuf::reflect::ProtobufValue for Latency {
+    fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
+        ::protobuf::reflect::ReflectValueRef::Message(self)
+    }
+}
+
+#[derive(PartialEq, Clone, Default)]
+pub struct Metrics {
+    // message fields
+    pub num_uids: ::std::collections::HashMap<::std::string::String, u64>,
+    // special fields
+    pub unknown_fields: ::protobuf::UnknownFields,
+    pub cached_size: ::protobuf::CachedSize,
+}
+
+impl<'a> ::std::default::Default for &'a Metrics {
+    fn default() -> &'a Metrics {
+        <Metrics as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl Metrics {
+    pub fn new() -> Metrics {
+        ::std::default::Default::default()
+    }
+
+    // repeated .api.Metrics.NumUidsEntry num_uids = 1;
+
+    pub fn get_num_uids(&self) -> &::std::collections::HashMap<::std::string::String, u64> {
+        &self.num_uids
+    }
+    pub fn clear_num_uids(&mut self) {
+        self.num_uids.clear();
+    }
+
+    // Param is passed by value, moved
+    pub fn set_num_uids(&mut self, v: ::std::collections::HashMap<::std::string::String, u64>) {
+        self.num_uids = v;
+    }
+
+    // Mutable pointer to the field.
+    pub fn mut_num_uids(&mut self) -> &mut ::std::collections::HashMap<::std::string::String, u64> {
+        &mut self.num_uids
+    }
+
+    // Take field
+    pub fn take_num_uids(&mut self) -> ::std::collections::HashMap<::std::string::String, u64> {
+        ::std::mem::replace(&mut self.num_uids, ::std::collections::HashMap::new())
+    }
+}
+
+impl ::protobuf::Message for Metrics {
+    fn is_initialized(&self) -> bool {
+        true
+    }
+
+    fn merge_from(
+        &mut self,
+        is: &mut ::protobuf::CodedInputStream<'_>,
+    ) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
+            match field_number {
+                1 => {
+                    ::protobuf::rt::read_map_into::<
+                        ::protobuf::types::ProtobufTypeString,
+                        ::protobuf::types::ProtobufTypeUint64,
+                    >(wire_type, is, &mut self.num_uids)?;
+                }
+                _ => {
+                    ::protobuf::rt::read_unknown_or_skip_group(
+                        field_number,
+                        wire_type,
+                        is,
+                        self.mut_unknown_fields(),
+                    )?;
+                }
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u32 {
+        let mut my_size = 0;
+        my_size += ::protobuf::rt::compute_map_size::<
+            ::protobuf::types::ProtobufTypeString,
+            ::protobuf::types::ProtobufTypeUint64,
+        >(1, &self.num_uids);
+        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
+        self.cached_size.set(my_size);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(
+        &self,
+        os: &mut ::protobuf::CodedOutputStream<'_>,
+    ) -> ::protobuf::ProtobufResult<()> {
+        ::protobuf::rt::write_map_with_cached_sizes::<
+            ::protobuf::types::ProtobufTypeString,
+            ::protobuf::types::ProtobufTypeUint64,
+        >(1, &self.num_uids, os)?;
+        os.write_unknown_fields(self.get_unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
+        &self.unknown_fields
+    }
+
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
+        &mut self.unknown_fields
+    }
+
+    fn as_any(&self) -> &dyn (::std::any::Any) {
+        self as &dyn (::std::any::Any)
+    }
+    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
+        self as &mut dyn (::std::any::Any)
+    }
+    fn into_any(self: ::std::boxed::Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
+        self
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        Self::descriptor_static()
+    }
+
+    fn new() -> Metrics {
+        Metrics::new()
+    }
+
+    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
+        static descriptor: ::protobuf::rt::LazyV2<::protobuf::reflect::MessageDescriptor> =
+            ::protobuf::rt::LazyV2::INIT;
+        descriptor.get(|| {
+            let mut fields = ::std::vec::Vec::new();
+            fields.push(::protobuf::reflect::accessor::make_map_accessor::<
+                _,
+                ::protobuf::types::ProtobufTypeString,
+                ::protobuf::types::ProtobufTypeUint64,
+            >(
+                "num_uids",
+                |m: &Metrics| &m.num_uids,
+                |m: &mut Metrics| &mut m.num_uids,
+            ));
+            ::protobuf::reflect::MessageDescriptor::new_pb_name::<Metrics>(
+                "Metrics",
+                fields,
+                file_descriptor_proto(),
+            )
+        })
+    }
+
+    fn default_instance() -> &'static Metrics {
+        static instance: ::protobuf::rt::LazyV2<Metrics> = ::protobuf::rt::LazyV2::INIT;
+        instance.get(Metrics::new)
+    }
+}
+
+impl ::protobuf::Clear for Metrics {
+    fn clear(&mut self) {
+        self.num_uids.clear();
+        self.unknown_fields.clear();
+    }
+}
+
+impl ::std::fmt::Debug for Metrics {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for Metrics {
     fn as_ref(&self) -> ::protobuf::reflect::ReflectValueRef {
         ::protobuf::reflect::ReflectValueRef::Message(self)
     }
@@ -5115,66 +5608,73 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     \x18\x0c\x20\x03(\x0b2\r.api.MutationR\tmutations\x12\x1d\n\ncommit_now\
     \x18\r\x20\x01(\x08R\tcommitNow\x1a7\n\tVarsEntry\x12\x10\n\x03key\x18\
     \x01\x20\x01(\tR\x03key\x12\x14\n\x05value\x18\x02\x20\x01(\tR\x05value:\
-    \x028\x01\"\xcf\x01\n\x08Response\x12\x12\n\x04json\x18\x01\x20\x01(\x0c\
-    R\x04json\x12!\n\x03txn\x18\x02\x20\x01(\x0b2\x0f.api.TxnContextR\x03txn\
-    \x12&\n\x07latency\x18\x03\x20\x01(\x0b2\x0c.api.LatencyR\x07latency\x12\
-    +\n\x04uids\x18\x0c\x20\x03(\x0b2\x17.api.Response.UidsEntryR\x04uids\
-    \x1a7\n\tUidsEntry\x12\x10\n\x03key\x18\x01\x20\x01(\tR\x03key\x12\x14\n\
-    \x05value\x18\x02\x20\x01(\tR\x05value:\x028\x01\"\xf3\x01\n\x08Mutation\
-    \x12\x19\n\x08set_json\x18\x01\x20\x01(\x0cR\x07setJson\x12\x1f\n\x0bdel\
-    ete_json\x18\x02\x20\x01(\x0cR\ndeleteJson\x12\x1d\n\nset_nquads\x18\x03\
-    \x20\x01(\x0cR\tsetNquads\x12\x1d\n\ndel_nquads\x18\x04\x20\x01(\x0cR\td\
-    elNquads\x12\x1c\n\x03set\x18\x05\x20\x03(\x0b2\n.api.NQuadR\x03set\x12\
-    \x1c\n\x03del\x18\x06\x20\x03(\x0b2\n.api.NQuadR\x03del\x12\x12\n\x04con\
-    d\x18\t\x20\x01(\tR\x04cond\x12\x1d\n\ncommit_now\x18\x0e\x20\x01(\x08R\
-    \tcommitNow\"\xe5\x01\n\tOperation\x12\x16\n\x06schema\x18\x01\x20\x01(\
-    \tR\x06schema\x12\x1b\n\tdrop_attr\x18\x02\x20\x01(\tR\x08dropAttr\x12\
-    \x19\n\x08drop_all\x18\x03\x20\x01(\x08R\x07dropAll\x12.\n\x07drop_op\
-    \x18\x04\x20\x01(\x0e2\x15.api.Operation.DropOpR\x06dropOp\x12\x1d\n\ndr\
-    op_value\x18\x05\x20\x01(\tR\tdropValue\"9\n\x06DropOp\x12\x08\n\x04NONE\
-    \x10\0\x12\x07\n\x03ALL\x10\x01\x12\x08\n\x04DATA\x10\x02\x12\x08\n\x04A\
-    TTR\x10\x03\x12\x08\n\x04TYPE\x10\x04\"\x1d\n\x07Payload\x12\x12\n\x04Da\
-    ta\x18\x01\x20\x01(\x0cR\x04Data\"\x88\x01\n\nTxnContext\x12\x19\n\x08st\
-    art_ts\x18\x01\x20\x01(\x04R\x07startTs\x12\x1b\n\tcommit_ts\x18\x02\x20\
-    \x01(\x04R\x08commitTs\x12\x18\n\x07aborted\x18\x03\x20\x01(\x08R\x07abo\
-    rted\x12\x12\n\x04keys\x18\x04\x20\x03(\tR\x04keys\x12\x14\n\x05preds\
-    \x18\x05\x20\x03(\tR\x05preds\"\x07\n\x05Check\"\x1b\n\x07Version\x12\
-    \x10\n\x03tag\x18\x01\x20\x01(\tR\x03tag\"\x9e\x01\n\x07Latency\x12\x1d\
-    \n\nparsing_ns\x18\x01\x20\x01(\x04R\tparsingNs\x12#\n\rprocessing_ns\
-    \x18\x02\x20\x01(\x04R\x0cprocessingNs\x12\x1f\n\x0bencoding_ns\x18\x03\
-    \x20\x01(\x04R\nencodingNs\x12.\n\x13assign_timestamp_ns\x18\x04\x20\x01\
-    (\x04R\x11assignTimestampNs\"\xd9\x01\n\x05NQuad\x12\x18\n\x07subject\
-    \x18\x01\x20\x01(\tR\x07subject\x12\x1c\n\tpredicate\x18\x02\x20\x01(\tR\
-    \tpredicate\x12\x1b\n\tobject_id\x18\x03\x20\x01(\tR\x08objectId\x12-\n\
-    \x0cobject_value\x18\x04\x20\x01(\x0b2\n.api.ValueR\x0bobjectValue\x12\
-    \x14\n\x05label\x18\x05\x20\x01(\tR\x05label\x12\x12\n\x04lang\x18\x06\
-    \x20\x01(\tR\x04lang\x12\"\n\x06facets\x18\x07\x20\x03(\x0b2\n.api.Facet\
-    R\x06facets\"\xe1\x02\n\x05Value\x12!\n\x0bdefault_val\x18\x01\x20\x01(\
-    \tH\0R\ndefaultVal\x12\x1d\n\tbytes_val\x18\x02\x20\x01(\x0cH\0R\x08byte\
-    sVal\x12\x19\n\x07int_val\x18\x03\x20\x01(\x03H\0R\x06intVal\x12\x1b\n\
-    \x08bool_val\x18\x04\x20\x01(\x08H\0R\x07boolVal\x12\x19\n\x07str_val\
-    \x18\x05\x20\x01(\tH\0R\x06strVal\x12\x1f\n\ndouble_val\x18\x06\x20\x01(\
-    \x01H\0R\tdoubleVal\x12\x19\n\x07geo_val\x18\x07\x20\x01(\x0cH\0R\x06geo\
-    Val\x12\x1b\n\x08date_val\x18\x08\x20\x01(\x0cH\0R\x07dateVal\x12#\n\x0c\
-    datetime_val\x18\t\x20\x01(\x0cH\0R\x0bdatetimeVal\x12#\n\x0cpassword_va\
-    l\x18\n\x20\x01(\tH\0R\x0bpasswordVal\x12\x19\n\x07uid_val\x18\x0b\x20\
-    \x01(\x04H\0R\x06uidValB\x05\n\x03val\"\xcf\x01\n\x05Facet\x12\x10\n\x03\
-    key\x18\x01\x20\x01(\tR\x03key\x12\x14\n\x05value\x18\x02\x20\x01(\x0cR\
-    \x05value\x12-\n\x08val_type\x18\x03\x20\x01(\x0e2\x12.api.Facet.ValType\
-    R\x07valType\x12\x16\n\x06tokens\x18\x04\x20\x03(\tR\x06tokens\x12\x14\n\
-    \x05alias\x18\x05\x20\x01(\tR\x05alias\"A\n\x07ValType\x12\n\n\x06STRING\
-    \x10\0\x12\x07\n\x03INT\x10\x01\x12\t\n\x05FLOAT\x10\x02\x12\x08\n\x04BO\
-    OL\x10\x03\x12\x0c\n\x08DATETIME\x10\x04\"g\n\x0cLoginRequest\x12\x16\n\
-    \x06userid\x18\x01\x20\x01(\tR\x06userid\x12\x1a\n\x08password\x18\x02\
-    \x20\x01(\tR\x08password\x12#\n\rrefresh_token\x18\x03\x20\x01(\tR\x0cre\
-    freshToken\"E\n\x03Jwt\x12\x1d\n\naccess_jwt\x18\x01\x20\x01(\tR\taccess\
-    Jwt\x12\x1f\n\x0brefresh_jwt\x18\x02\x20\x01(\tR\nrefreshJwt2\xe7\x01\n\
-    \x06Dgraph\x12+\n\x05Login\x12\x11.api.LoginRequest\x1a\r.api.Response\"\
-    \0\x12&\n\x05Query\x12\x0c.api.Request\x1a\r.api.Response\"\0\x12'\n\x05\
-    Alter\x12\x0e.api.Operation\x1a\x0c.api.Payload\"\0\x123\n\rCommitOrAbor\
-    t\x12\x0f.api.TxnContext\x1a\x0f.api.TxnContext\"\0\x12*\n\x0cCheckVersi\
-    on\x12\n.api.Check\x1a\x0c.api.Version\"\0B\x18\n\tio.dgraphB\x0bDgraphP\
-    rotob\x06proto3\
+    \x028\x01\"\x1a\n\x04Uids\x12\x12\n\x04uids\x18\x01\x20\x03(\tR\x04uids\
+    \"\xf7\x01\n\x08Response\x12\x12\n\x04json\x18\x01\x20\x01(\x0cR\x04json\
+    \x12!\n\x03txn\x18\x02\x20\x01(\x0b2\x0f.api.TxnContextR\x03txn\x12&\n\
+    \x07latency\x18\x03\x20\x01(\x0b2\x0c.api.LatencyR\x07latency\x12&\n\x07\
+    metrics\x18\x04\x20\x01(\x0b2\x0c.api.MetricsR\x07metrics\x12+\n\x04uids\
+    \x18\x0c\x20\x03(\x0b2\x17.api.Response.UidsEntryR\x04uids\x1a7\n\tUidsE\
+    ntry\x12\x10\n\x03key\x18\x01\x20\x01(\tR\x03key\x12\x14\n\x05value\x18\
+    \x02\x20\x01(\tR\x05value:\x028\x01\"\xf3\x01\n\x08Mutation\x12\x19\n\
+    \x08set_json\x18\x01\x20\x01(\x0cR\x07setJson\x12\x1f\n\x0bdelete_json\
+    \x18\x02\x20\x01(\x0cR\ndeleteJson\x12\x1d\n\nset_nquads\x18\x03\x20\x01\
+    (\x0cR\tsetNquads\x12\x1d\n\ndel_nquads\x18\x04\x20\x01(\x0cR\tdelNquads\
+    \x12\x1c\n\x03set\x18\x05\x20\x03(\x0b2\n.api.NQuadR\x03set\x12\x1c\n\
+    \x03del\x18\x06\x20\x03(\x0b2\n.api.NQuadR\x03del\x12\x12\n\x04cond\x18\
+    \t\x20\x01(\tR\x04cond\x12\x1d\n\ncommit_now\x18\x0e\x20\x01(\x08R\tcomm\
+    itNow\"\x91\x02\n\tOperation\x12\x16\n\x06schema\x18\x01\x20\x01(\tR\x06\
+    schema\x12\x1b\n\tdrop_attr\x18\x02\x20\x01(\tR\x08dropAttr\x12\x19\n\
+    \x08drop_all\x18\x03\x20\x01(\x08R\x07dropAll\x12.\n\x07drop_op\x18\x04\
+    \x20\x01(\x0e2\x15.api.Operation.DropOpR\x06dropOp\x12\x1d\n\ndrop_value\
+    \x18\x05\x20\x01(\tR\tdropValue\x12*\n\x11run_in_background\x18\x06\x20\
+    \x01(\x08R\x0frunInBackground\"9\n\x06DropOp\x12\x08\n\x04NONE\x10\0\x12\
+    \x07\n\x03ALL\x10\x01\x12\x08\n\x04DATA\x10\x02\x12\x08\n\x04ATTR\x10\
+    \x03\x12\x08\n\x04TYPE\x10\x04\"\x1d\n\x07Payload\x12\x12\n\x04Data\x18\
+    \x01\x20\x01(\x0cR\x04Data\"\x88\x01\n\nTxnContext\x12\x19\n\x08start_ts\
+    \x18\x01\x20\x01(\x04R\x07startTs\x12\x1b\n\tcommit_ts\x18\x02\x20\x01(\
+    \x04R\x08commitTs\x12\x18\n\x07aborted\x18\x03\x20\x01(\x08R\x07aborted\
+    \x12\x12\n\x04keys\x18\x04\x20\x03(\tR\x04keys\x12\x14\n\x05preds\x18\
+    \x05\x20\x03(\tR\x05preds\"\x07\n\x05Check\"\x1b\n\x07Version\x12\x10\n\
+    \x03tag\x18\x01\x20\x01(\tR\x03tag\"\xb9\x01\n\x07Latency\x12\x1d\n\npar\
+    sing_ns\x18\x01\x20\x01(\x04R\tparsingNs\x12#\n\rprocessing_ns\x18\x02\
+    \x20\x01(\x04R\x0cprocessingNs\x12\x1f\n\x0bencoding_ns\x18\x03\x20\x01(\
+    \x04R\nencodingNs\x12.\n\x13assign_timestamp_ns\x18\x04\x20\x01(\x04R\
+    \x11assignTimestampNs\x12\x19\n\x08total_ns\x18\x05\x20\x01(\x04R\x07tot\
+    alNs\"{\n\x07Metrics\x124\n\x08num_uids\x18\x01\x20\x03(\x0b2\x19.api.Me\
+    trics.NumUidsEntryR\x07numUids\x1a:\n\x0cNumUidsEntry\x12\x10\n\x03key\
+    \x18\x01\x20\x01(\tR\x03key\x12\x14\n\x05value\x18\x02\x20\x01(\x04R\x05\
+    value:\x028\x01\"\xd9\x01\n\x05NQuad\x12\x18\n\x07subject\x18\x01\x20\
+    \x01(\tR\x07subject\x12\x1c\n\tpredicate\x18\x02\x20\x01(\tR\tpredicate\
+    \x12\x1b\n\tobject_id\x18\x03\x20\x01(\tR\x08objectId\x12-\n\x0cobject_v\
+    alue\x18\x04\x20\x01(\x0b2\n.api.ValueR\x0bobjectValue\x12\x14\n\x05labe\
+    l\x18\x05\x20\x01(\tR\x05label\x12\x12\n\x04lang\x18\x06\x20\x01(\tR\x04\
+    lang\x12\"\n\x06facets\x18\x07\x20\x03(\x0b2\n.api.FacetR\x06facets\"\
+    \xe1\x02\n\x05Value\x12!\n\x0bdefault_val\x18\x01\x20\x01(\tH\0R\ndefaul\
+    tVal\x12\x1d\n\tbytes_val\x18\x02\x20\x01(\x0cH\0R\x08bytesVal\x12\x19\n\
+    \x07int_val\x18\x03\x20\x01(\x03H\0R\x06intVal\x12\x1b\n\x08bool_val\x18\
+    \x04\x20\x01(\x08H\0R\x07boolVal\x12\x19\n\x07str_val\x18\x05\x20\x01(\t\
+    H\0R\x06strVal\x12\x1f\n\ndouble_val\x18\x06\x20\x01(\x01H\0R\tdoubleVal\
+    \x12\x19\n\x07geo_val\x18\x07\x20\x01(\x0cH\0R\x06geoVal\x12\x1b\n\x08da\
+    te_val\x18\x08\x20\x01(\x0cH\0R\x07dateVal\x12#\n\x0cdatetime_val\x18\t\
+    \x20\x01(\x0cH\0R\x0bdatetimeVal\x12#\n\x0cpassword_val\x18\n\x20\x01(\t\
+    H\0R\x0bpasswordVal\x12\x19\n\x07uid_val\x18\x0b\x20\x01(\x04H\0R\x06uid\
+    ValB\x05\n\x03val\"\xcf\x01\n\x05Facet\x12\x10\n\x03key\x18\x01\x20\x01(\
+    \tR\x03key\x12\x14\n\x05value\x18\x02\x20\x01(\x0cR\x05value\x12-\n\x08v\
+    al_type\x18\x03\x20\x01(\x0e2\x12.api.Facet.ValTypeR\x07valType\x12\x16\
+    \n\x06tokens\x18\x04\x20\x03(\tR\x06tokens\x12\x14\n\x05alias\x18\x05\
+    \x20\x01(\tR\x05alias\"A\n\x07ValType\x12\n\n\x06STRING\x10\0\x12\x07\n\
+    \x03INT\x10\x01\x12\t\n\x05FLOAT\x10\x02\x12\x08\n\x04BOOL\x10\x03\x12\
+    \x0c\n\x08DATETIME\x10\x04\"g\n\x0cLoginRequest\x12\x16\n\x06userid\x18\
+    \x01\x20\x01(\tR\x06userid\x12\x1a\n\x08password\x18\x02\x20\x01(\tR\x08\
+    password\x12#\n\rrefresh_token\x18\x03\x20\x01(\tR\x0crefreshToken\"E\n\
+    \x03Jwt\x12\x1d\n\naccess_jwt\x18\x01\x20\x01(\tR\taccessJwt\x12\x1f\n\
+    \x0brefresh_jwt\x18\x02\x20\x01(\tR\nrefreshJwt2\xe7\x01\n\x06Dgraph\x12\
+    +\n\x05Login\x12\x11.api.LoginRequest\x1a\r.api.Response\"\0\x12&\n\x05Q\
+    uery\x12\x0c.api.Request\x1a\r.api.Response\"\0\x12'\n\x05Alter\x12\x0e.\
+    api.Operation\x1a\x0c.api.Payload\"\0\x123\n\rCommitOrAbort\x12\x0f.api.\
+    TxnContext\x1a\x0f.api.TxnContext\"\0\x12*\n\x0cCheckVersion\x12\n.api.C\
+    heck\x1a\x0c.api.Version\"\0B\x18\n\tio.dgraphB\x0bDgraphProtob\x06proto\
+    3\
 ";
 
 static file_descriptor_proto_lazy: ::protobuf::rt::LazyV2<
