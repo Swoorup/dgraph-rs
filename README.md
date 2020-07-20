@@ -52,6 +52,13 @@ dgraph = { version = "0.3.1", default-features = false, features = ["dgraph-1-1"
 
 This most likely changes in the future and support for 1.0 will be dropped.
 
+There are also a couple of passthrough `grpcio` features available:
+
+- `openssl`
+- `openssl-vendored`
+
+Those are described in [`grpcio` documentation](https://github.com/tikv/grpc-rs#feature-openssl-and-openssl-vendored).
+
 ## Using a client
 
 ### Create a client
