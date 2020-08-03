@@ -13,21 +13,23 @@ edition = "2018"
 [dependencies]
 grpcio = "0.6.0"
 futures = "0.3.5"
-protobuf = "2.16.2"
+protobuf = { version = "2.16.2", features = ["with-serde"] }
+protobuf-codegen = "2.16.2"
 rand = "0.7.2"
+serde = "1.0.114"
+serde_derive = "1.0.114"
+serde_json = "1.0.56"
 protoc-grpcio = { version = "2.0.0", optional = true }
 cfg-if = "0.1.10"
 log = "0.4.11"
 
 [dev-dependencies]
 chrono = { version = "0.4.13", features = ["serde"] }
-serde = "1.0.114"
-serde_derive = "1.0.114"
-serde_json = "1.0.56"
 geojson = "0.19.0"
 
 [features]
-default = ["dgraph-1-0"]
+default = ["dgraph-1-0", "with-serde"]
+with-serde = []
 dgraph-1-0 = []
 dgraph-1-1 = []
 compile-protobufs = ["protoc-grpcio"]

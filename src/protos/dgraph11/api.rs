@@ -24,6 +24,7 @@
 // const _PROTOBUF_VERSION_CHECK: () = ::protobuf::VERSION_2_16_2;
 
 #[derive(PartialEq, Clone, Default)]
+#[cfg_attr(feature = "with-serde", derive(Serialize, Deserialize))]
 pub struct Request {
     // message fields
     pub start_ts: u64,
@@ -34,7 +35,9 @@ pub struct Request {
     pub mutations: ::protobuf::RepeatedField<Mutation>,
     pub commit_now: bool,
     // special fields
+    #[cfg_attr(feature = "with-serde", serde(skip))]
     pub unknown_fields: ::protobuf::UnknownFields,
+    #[cfg_attr(feature = "with-serde", serde(skip))]
     pub cached_size: ::protobuf::CachedSize,
 }
 
@@ -472,11 +475,14 @@ impl ::protobuf::reflect::ProtobufValue for Request {
 }
 
 #[derive(PartialEq, Clone, Default)]
+#[cfg_attr(feature = "with-serde", derive(Serialize, Deserialize))]
 pub struct Uids {
     // message fields
     pub uids: ::protobuf::RepeatedField<::std::string::String>,
     // special fields
+    #[cfg_attr(feature = "with-serde", serde(skip))]
     pub unknown_fields: ::protobuf::UnknownFields,
+    #[cfg_attr(feature = "with-serde", serde(skip))]
     pub cached_size: ::protobuf::CachedSize,
 }
 
@@ -642,6 +648,7 @@ impl ::protobuf::reflect::ProtobufValue for Uids {
 }
 
 #[derive(PartialEq, Clone, Default)]
+#[cfg_attr(feature = "with-serde", derive(Serialize, Deserialize))]
 pub struct Response {
     // message fields
     pub json: ::std::vec::Vec<u8>,
@@ -650,7 +657,9 @@ pub struct Response {
     pub metrics: ::protobuf::SingularPtrField<Metrics>,
     pub uids: ::std::collections::HashMap<::std::string::String, ::std::string::String>,
     // special fields
+    #[cfg_attr(feature = "with-serde", serde(skip))]
     pub unknown_fields: ::protobuf::UnknownFields,
+    #[cfg_attr(feature = "with-serde", serde(skip))]
     pub cached_size: ::protobuf::CachedSize,
 }
 
@@ -1058,6 +1067,7 @@ impl ::protobuf::reflect::ProtobufValue for Response {
 }
 
 #[derive(PartialEq, Clone, Default)]
+#[cfg_attr(feature = "with-serde", derive(Serialize, Deserialize))]
 pub struct Mutation {
     // message fields
     pub set_json: ::std::vec::Vec<u8>,
@@ -1069,7 +1079,9 @@ pub struct Mutation {
     pub cond: ::std::string::String,
     pub commit_now: bool,
     // special fields
+    #[cfg_attr(feature = "with-serde", serde(skip))]
     pub unknown_fields: ::protobuf::UnknownFields,
+    #[cfg_attr(feature = "with-serde", serde(skip))]
     pub cached_size: ::protobuf::CachedSize,
 }
 
@@ -1564,6 +1576,7 @@ impl ::protobuf::reflect::ProtobufValue for Mutation {
 }
 
 #[derive(PartialEq, Clone, Default)]
+#[cfg_attr(feature = "with-serde", derive(Serialize, Deserialize))]
 pub struct Operation {
     // message fields
     pub schema: ::std::string::String,
@@ -1573,7 +1586,9 @@ pub struct Operation {
     pub drop_value: ::std::string::String,
     pub run_in_background: bool,
     // special fields
+    #[cfg_attr(feature = "with-serde", serde(skip))]
     pub unknown_fields: ::protobuf::UnknownFields,
+    #[cfg_attr(feature = "with-serde", serde(skip))]
     pub cached_size: ::protobuf::CachedSize,
 }
 
@@ -1952,6 +1967,7 @@ impl ::protobuf::reflect::ProtobufValue for Operation {
 }
 
 #[derive(Clone, PartialEq, Eq, Debug, Hash)]
+#[cfg_attr(feature = "with-serde", derive(Serialize, Deserialize))]
 pub enum Operation_DropOp {
     NONE = 0,
     ALL = 1,
@@ -2014,11 +2030,14 @@ impl ::protobuf::reflect::ProtobufValue for Operation_DropOp {
 }
 
 #[derive(PartialEq, Clone, Default)]
+#[cfg_attr(feature = "with-serde", derive(Serialize, Deserialize))]
 pub struct Payload {
     // message fields
     pub Data: ::std::vec::Vec<u8>,
     // special fields
+    #[cfg_attr(feature = "with-serde", serde(skip))]
     pub unknown_fields: ::protobuf::UnknownFields,
+    #[cfg_attr(feature = "with-serde", serde(skip))]
     pub cached_size: ::protobuf::CachedSize,
 }
 
@@ -2187,6 +2206,7 @@ impl ::protobuf::reflect::ProtobufValue for Payload {
 }
 
 #[derive(PartialEq, Clone, Default)]
+#[cfg_attr(feature = "with-serde", derive(Serialize, Deserialize))]
 pub struct TxnContext {
     // message fields
     pub start_ts: u64,
@@ -2195,7 +2215,9 @@ pub struct TxnContext {
     pub keys: ::protobuf::RepeatedField<::std::string::String>,
     pub preds: ::protobuf::RepeatedField<::std::string::String>,
     // special fields
+    #[cfg_attr(feature = "with-serde", serde(skip))]
     pub unknown_fields: ::protobuf::UnknownFields,
+    #[cfg_attr(feature = "with-serde", serde(skip))]
     pub cached_size: ::protobuf::CachedSize,
 }
 
@@ -2531,9 +2553,12 @@ impl ::protobuf::reflect::ProtobufValue for TxnContext {
 }
 
 #[derive(PartialEq, Clone, Default)]
+#[cfg_attr(feature = "with-serde", derive(Serialize, Deserialize))]
 pub struct Check {
     // special fields
+    #[cfg_attr(feature = "with-serde", serde(skip))]
     pub unknown_fields: ::protobuf::UnknownFields,
+    #[cfg_attr(feature = "with-serde", serde(skip))]
     pub cached_size: ::protobuf::CachedSize,
 }
 
@@ -2659,11 +2684,14 @@ impl ::protobuf::reflect::ProtobufValue for Check {
 }
 
 #[derive(PartialEq, Clone, Default)]
+#[cfg_attr(feature = "with-serde", derive(Serialize, Deserialize))]
 pub struct Version {
     // message fields
     pub tag: ::std::string::String,
     // special fields
+    #[cfg_attr(feature = "with-serde", serde(skip))]
     pub unknown_fields: ::protobuf::UnknownFields,
+    #[cfg_attr(feature = "with-serde", serde(skip))]
     pub cached_size: ::protobuf::CachedSize,
 }
 
@@ -2830,6 +2858,7 @@ impl ::protobuf::reflect::ProtobufValue for Version {
 }
 
 #[derive(PartialEq, Clone, Default)]
+#[cfg_attr(feature = "with-serde", derive(Serialize, Deserialize))]
 pub struct Latency {
     // message fields
     pub parsing_ns: u64,
@@ -2838,7 +2867,9 @@ pub struct Latency {
     pub assign_timestamp_ns: u64,
     pub total_ns: u64,
     // special fields
+    #[cfg_attr(feature = "with-serde", serde(skip))]
     pub unknown_fields: ::protobuf::UnknownFields,
+    #[cfg_attr(feature = "with-serde", serde(skip))]
     pub cached_size: ::protobuf::CachedSize,
 }
 
@@ -3174,11 +3205,14 @@ impl ::protobuf::reflect::ProtobufValue for Latency {
 }
 
 #[derive(PartialEq, Clone, Default)]
+#[cfg_attr(feature = "with-serde", derive(Serialize, Deserialize))]
 pub struct Metrics {
     // message fields
     pub num_uids: ::std::collections::HashMap<::std::string::String, u64>,
     // special fields
+    #[cfg_attr(feature = "with-serde", serde(skip))]
     pub unknown_fields: ::protobuf::UnknownFields,
+    #[cfg_attr(feature = "with-serde", serde(skip))]
     pub cached_size: ::protobuf::CachedSize,
 }
 
@@ -3352,6 +3386,7 @@ impl ::protobuf::reflect::ProtobufValue for Metrics {
 }
 
 #[derive(PartialEq, Clone, Default)]
+#[cfg_attr(feature = "with-serde", derive(Serialize, Deserialize))]
 pub struct NQuad {
     // message fields
     pub subject: ::std::string::String,
@@ -3362,7 +3397,9 @@ pub struct NQuad {
     pub lang: ::std::string::String,
     pub facets: ::protobuf::RepeatedField<Facet>,
     // special fields
+    #[cfg_attr(feature = "with-serde", serde(skip))]
     pub unknown_fields: ::protobuf::UnknownFields,
+    #[cfg_attr(feature = "with-serde", serde(skip))]
     pub cached_size: ::protobuf::CachedSize,
 }
 
@@ -3839,11 +3876,14 @@ impl ::protobuf::reflect::ProtobufValue for NQuad {
 }
 
 #[derive(PartialEq, Clone, Default)]
+#[cfg_attr(feature = "with-serde", derive(Serialize, Deserialize))]
 pub struct Value {
     // message oneof groups
     pub val: ::std::option::Option<Value_oneof_val>,
     // special fields
+    #[cfg_attr(feature = "with-serde", serde(skip))]
     pub unknown_fields: ::protobuf::UnknownFields,
+    #[cfg_attr(feature = "with-serde", serde(skip))]
     pub cached_size: ::protobuf::CachedSize,
 }
 
@@ -3854,6 +3894,7 @@ impl<'a> ::std::default::Default for &'a Value {
 }
 
 #[derive(Clone, PartialEq, Debug)]
+#[cfg_attr(feature = "with-serde", derive(Serialize, Deserialize))]
 pub enum Value_oneof_val {
     default_val(::std::string::String),
     bytes_val(::std::vec::Vec<u8>),
@@ -4691,6 +4732,7 @@ impl ::protobuf::reflect::ProtobufValue for Value {
 }
 
 #[derive(PartialEq, Clone, Default)]
+#[cfg_attr(feature = "with-serde", derive(Serialize, Deserialize))]
 pub struct Facet {
     // message fields
     pub key: ::std::string::String,
@@ -4699,7 +4741,9 @@ pub struct Facet {
     pub tokens: ::protobuf::RepeatedField<::std::string::String>,
     pub alias: ::std::string::String,
     // special fields
+    #[cfg_attr(feature = "with-serde", serde(skip))]
     pub unknown_fields: ::protobuf::UnknownFields,
+    #[cfg_attr(feature = "with-serde", serde(skip))]
     pub cached_size: ::protobuf::CachedSize,
 }
 
@@ -5040,6 +5084,7 @@ impl ::protobuf::reflect::ProtobufValue for Facet {
 }
 
 #[derive(Clone, PartialEq, Eq, Debug, Hash)]
+#[cfg_attr(feature = "with-serde", derive(Serialize, Deserialize))]
 pub enum Facet_ValType {
     STRING = 0,
     INT = 1,
@@ -5102,13 +5147,16 @@ impl ::protobuf::reflect::ProtobufValue for Facet_ValType {
 }
 
 #[derive(PartialEq, Clone, Default)]
+#[cfg_attr(feature = "with-serde", derive(Serialize, Deserialize))]
 pub struct LoginRequest {
     // message fields
     pub userid: ::std::string::String,
     pub password: ::std::string::String,
     pub refresh_token: ::std::string::String,
     // special fields
+    #[cfg_attr(feature = "with-serde", serde(skip))]
     pub unknown_fields: ::protobuf::UnknownFields,
+    #[cfg_attr(feature = "with-serde", serde(skip))]
     pub cached_size: ::protobuf::CachedSize,
 }
 
@@ -5375,12 +5423,15 @@ impl ::protobuf::reflect::ProtobufValue for LoginRequest {
 }
 
 #[derive(PartialEq, Clone, Default)]
+#[cfg_attr(feature = "with-serde", derive(Serialize, Deserialize))]
 pub struct Jwt {
     // message fields
     pub access_jwt: ::std::string::String,
     pub refresh_jwt: ::std::string::String,
     // special fields
+    #[cfg_attr(feature = "with-serde", serde(skip))]
     pub unknown_fields: ::protobuf::UnknownFields,
+    #[cfg_attr(feature = "with-serde", serde(skip))]
     pub cached_size: ::protobuf::CachedSize,
 }
 

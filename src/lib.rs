@@ -14,6 +14,14 @@ pub use protos::api::*;
 pub use protos::api_grpc::*;
 pub use txn::Txn;
 
+#[cfg(feature = "with-serde")]
+extern crate serde;
+#[cfg(feature = "with-serde")]
+#[macro_use]
+extern crate serde_derive;
+#[cfg(feature = "with-serde")]
+extern crate serde_json;
+
 pub fn new_secure_dgraph_client(
     addr: &str,
     root_ca: Vec<u8>,
