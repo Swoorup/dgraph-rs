@@ -8,7 +8,7 @@ cluster (1 Dgraph Zero and 1 Dgraph Alpha) configured with mutual TLS.
 
 ### Install Dgraph
 
-You will need to [install Dgraph v1.0.10 or
+You will need to [install Dgraph v1.1 or
 above](https://docs.dgraph.io/get-started/#step-1-install-dgraph).
 
 A quick-start installation script is available for Linux and Mac:

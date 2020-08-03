@@ -39,174 +39,82 @@ impl Txn<'_> {
         self.query_with_vars(query, HashMap::new())
     }
 
-    cfg_if::cfg_if! {
-        if #[cfg(feature = "dgraph-1-0")] {
-            pub fn query_with_vars(
-                &mut self,
-                query: &str,
-                vars: HashMap<String, String>,
-            ) -> Result<api::Response, DgraphError> {
-                if self.finished {
-                    return Err(DgraphError::TxnFinished);
-                }
+    pub fn query_with_vars(
+        &mut self,
+        query: &str,
+        vars: HashMap<String, String>,
+    ) -> Result<api::Response, DgraphError> {
+        let mut request = api::Request {
+            query: query.to_string(),
+            vars,
+            start_ts: self.context.get_start_ts(),
+            read_only: self.read_only,
+            best_effort: self.best_effort,
+            ..Default::default()
+        };
 
-                let request = api::Request {
-                    query: query.to_string(),
-                    start_ts: self.context.start_ts,
-                    vars: vars.clone(),
-                    read_only: self.read_only,
-                    best_effort: self.best_effort,
-                    ..Default::default()
-                };
-                let response = self.client.query(&request);
+        self.do_request(&mut request)
+    }
 
-                match response {
-                    Ok(response) => {
-                        let txn = match response.txn.as_ref() {
-                            Some(txn) => txn,
-                            None => return Err(DgraphError::EmptyTxn),
-                        };
+    pub fn mutate(&mut self, mu: api::Mutation) -> Result<api::Response, DgraphError> {
+        let mut request = api::Request::new();
+        let mutations = vec![mu.clone()];
 
-                        self.merge_context(txn)?;
+        request.set_mutations(mutations.into());
+        request.set_commit_now(mu.get_commit_now());
 
-                        Ok(response)
-                    }
-                    Err(err) => {
-                        if self.dgraph.is_jwt_expired(&err) {
-                            self.dgraph.retry_login()?;
-                            self.query_with_vars(query, vars)
-                        } else {
-                            Err(err.into())
-                        }
-                    }
-                }
+        self.do_request(&mut request)
+    }
+
+    pub fn do_request(&mut self, request: &mut api::Request) -> Result<api::Response, DgraphError> {
+        let mutation_list = request.get_mutations();
+
+        if self.finished {
+            return Err(DgraphError::TxnFinished);
+        }
+
+        if mutation_list.len() > 0 {
+            if self.read_only {
+                return Err(DgraphError::TxnReadOnly);
             }
 
-            pub fn mutate(&mut self, mut mu: api::Mutation) -> Result<api::Assigned, DgraphError> {
-                match (self.finished, self.read_only) {
-                    (true, _) => return Err(DgraphError::TxnFinished),
-                    (_, true) => return Err(DgraphError::TxnReadOnly),
-                    _ => (),
-                }
+            self.mutated = true;
+        }
 
-                self.mutated = true;
-                mu.start_ts = self.context.start_ts;
-                let commit_now = mu.commit_now;
-                let mu_res = self.client.mutate(&mu);
+        request.set_start_ts(self.context.get_start_ts());
 
-                let mu_res = match mu_res {
-                    Ok(mu_res) => mu_res,
-                    Err(e) => {
-                        let _ = self.discard();
-
-                        if let grpcio::Error::RpcFailure(rpc_status) = &e {
-                            if rpc_status.status == grpcio::RpcStatusCode::UNIMPLEMENTED {
-                                log::warn!(
-                                    "Unknown gRPC method. This might mean that you are using \
-                                    Dgraph 1.1+. If this is the case, install this crate with \
-                                    `--no-default-features --features dgraph-1-1`."
-                                );
-                            }
-                        }
-
-                        return Err(e.into());
+        let response = match self.client.query(&request) {
+            Ok(response) => response,
+            Err(err) => {
+                let retry_result = if self.dgraph.is_jwt_expired(&err) {
+                    match self.dgraph.retry_login() {
+                        Ok(_) => match self.client.query(&request) {
+                            Ok(response) => Ok(response),
+                            Err(err) => Err(err.into()),
+                        },
+                        Err(err) => Err(err),
                     }
+                } else {
+                    Err(err.into())
                 };
 
-                if commit_now {
-                    self.finished = true;
-                }
-
-                {
-                    let context = match mu_res.context.as_ref() {
-                        Some(context) => context,
-                        None => return Err(DgraphError::MissingTxnContext),
-                    };
-
-                    self.merge_context(context)?;
-                }
-
-                Ok(mu_res)
-            }
-        } else if #[cfg(feature = "dgraph-1-1")] {
-            pub fn query_with_vars(
-                &mut self,
-                query: &str,
-                vars: HashMap<String, String>,
-            ) -> Result<api::Response, DgraphError> {
-                let mut request = api::Request {
-                    query: query.to_string(),
-                    vars,
-                    start_ts: self.context.get_start_ts(),
-                    read_only: self.read_only,
-                    best_effort: self.best_effort,
-                    ..Default::default()
-                };
-
-                self.do_request(&mut request)
-            }
-
-            pub fn mutate(&mut self, mu: api::Mutation) -> Result<api::Response, DgraphError> {
-                let mut request = api::Request::new();
-                let mutations = vec![mu.clone()];
-
-                request.set_mutations(mutations.into());
-                request.set_commit_now(mu.get_commit_now());
-
-                self.do_request(&mut request)
-            }
-
-            pub fn do_request(&mut self, request: &mut api::Request) -> Result<api::Response, DgraphError> {
-                let mutation_list = request.get_mutations();
-
-                if self.finished {
-                    return Err(DgraphError::TxnFinished);
-                }
-
-                if mutation_list.len() > 0 {
-                    if self.read_only {
-                        return Err(DgraphError::TxnReadOnly)
-                    }
-
-                    self.mutated = true;
-                }
-
-                request.set_start_ts(self.context.get_start_ts());
-
-                let response = match self.client.query(&request) {
+                match retry_result {
                     Ok(response) => response,
                     Err(err) => {
-                        let retry_result = if self.dgraph.is_jwt_expired(&err) {
-                            match self.dgraph.retry_login() {
-                                Ok(_) => match self.client.query(&request) {
-                                    Ok(response) => Ok(response),
-                                    Err(err) => Err(err.into()),
-                                },
-                                Err(err) => Err(err),
-                            }
-                        } else {
-                            Err(err.into())
-                        };
-
-                        match retry_result {
-                            Ok(response) => response,
-                            Err(err) => {
-                                let _ = self.discard();
-                                return Err(err);
-                            }
-                        }
-                    },
-                };
-
-                if request.commit_now {
-                    self.finished = true;
+                        let _ = self.discard();
+                        return Err(err);
+                    }
                 }
-
-                self.merge_context(response.get_txn())?;
-
-                Ok(response)
             }
+        };
+
+        if request.commit_now {
+            self.finished = true;
         }
+
+        self.merge_context(response.get_txn())?;
+
+        Ok(response)
     }
 
     pub fn commit(mut self) -> Result<(), DgraphError> {

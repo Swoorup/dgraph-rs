@@ -1,6 +1,5 @@
 use std::collections::HashMap;
 
-#[cfg(feature = "dgraph-1-1")]
 use dgraph::Request;
 use dgraph::{make_dgraph, DgraphError};
 use serde_derive::{Deserialize, Serialize};
@@ -199,7 +198,6 @@ fn it_does_not_commit_discarded_transaction() {
     assert!(error_matched);
 }
 
-#[cfg(feature = "dgraph-1-1")]
 #[test]
 fn it_runs_query_through_do_request() {
     let dgraph = make_dgraph!(dgraph::new_dgraph_client(common::DGRAPH_URL));
@@ -225,7 +223,6 @@ fn it_runs_query_through_do_request() {
     assert_eq!(json.uids[0].uid, uid);
 }
 
-#[cfg(feature = "dgraph-1-1")]
 #[test]
 fn it_runs_query_and_mutation_without_variables_through_do_request() {
     let dgraph = make_dgraph!(dgraph::new_dgraph_client(common::DGRAPH_URL));
@@ -256,7 +253,6 @@ fn it_runs_query_and_mutation_without_variables_through_do_request() {
     assert!(result.is_ok());
 }
 
-#[cfg(feature = "dgraph-1-1")]
 #[test]
 fn it_runs_query_and_mutation_through_do_request() {
     let dgraph = make_dgraph!(dgraph::new_dgraph_client(common::DGRAPH_URL));
