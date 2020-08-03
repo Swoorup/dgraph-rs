@@ -4,7 +4,7 @@ mod common;
 
 fn is_connected(dgraph: &Dgraph) -> bool {
     let q = "schema {}".to_string();
-    let response = dgraph.new_readonly_txn().query(q);
+    let response = dgraph.new_readonly_txn().query(&q);
 
     response.is_ok()
 }

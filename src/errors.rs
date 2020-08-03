@@ -12,6 +12,7 @@ pub enum DgraphError {
     MissingTxnContext,
     WriteTxnBestEffort,
     StartTsMismatch,
+    JwtRefreshTokenEmpty,
     GrpcError(grpcio::Error),
 }
 
@@ -40,6 +41,7 @@ impl fmt::Display for DgraphError {
             DgraphError::EmptyTxn => write!(f, "Got empty Txn response back from query"),
             DgraphError::MissingTxnContext => write!(f, "Missing Txn context on mutation response"),
             DgraphError::StartTsMismatch => write!(f, "StartTs mismatch"),
+            DgraphError::JwtRefreshTokenEmpty => write!(f, "JWT refresh token is empty"),
             DgraphError::GrpcError(ref grpc_error) => write!(f, "Grpc error: {}", grpc_error),
         }
     }

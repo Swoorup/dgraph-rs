@@ -26,11 +26,7 @@ impl Dgraph {
         }
     }
 
-    pub fn login(&self, userid: String, password: String) -> Result<api::Response, DgraphError> {
-        let _guard = self
-            .jwt
-            .lock()
-            .expect("Unable to block or acquire lock to jwt mutex");
+    pub fn login(&mut self, userid: String, password: String) -> Result<(), DgraphError> {
         let dc = self.any_client().expect("Cannot login. No client present");
 
         let login_request = api::LoginRequest {
@@ -39,23 +35,35 @@ impl Dgraph {
             ..Default::default()
         };
 
-        let _res = dc.login(&login_request)?;
+        let res = dc.login(&login_request)?;
+        let jwt = protobuf::parse_from_bytes::<api::Jwt>(res.get_json()).unwrap();
 
-        unimplemented!()
-    }
+        *self
+            .jwt
+            .lock()
+            .expect("Unable to block or acquire lock to jwt mutex") = jwt;
 
-    pub fn retry_login(
-        &self,
-        _userid: String,
-        _password: String,
-    ) -> Result<api::Response, DgraphError> {
-        unimplemented!()
+        Ok(())
     }
 
     pub fn alter(&self, op: &api::Operation) -> Result<api::Payload, DgraphError> {
         let dc = self.any_client().expect("Cannot alter. No client present");
-        let res = dc.alter(op)?;
-        Ok(res)
+        let res = dc.alter(op);
+
+        match res {
+            Ok(res) => Ok(res),
+            Err(err) => {
+                if self.is_jwt_expired(&err) {
+                    self.retry_login()?;
+
+                    let res = dc.alter(op)?;
+
+                    Ok(res)
+                } else {
+                    Err(err.into())
+                }
+            }
+        }
     }
 
     pub fn any_client(&self) -> Option<&api_grpc::DgraphClient> {
@@ -74,6 +82,7 @@ impl Dgraph {
             client: self
                 .any_client()
                 .expect("Cannot create transactions. No client present!"),
+            dgraph: self,
         }
     }
 
@@ -81,5 +90,37 @@ impl Dgraph {
         let mut txn = self.new_txn();
         txn.read_only = true;
         txn
+    }
+
+    pub fn is_jwt_expired(&self, grpc_error: &grpcio::Error) -> bool {
+        if let grpcio::Error::RpcFailure(rpc_failure) = grpc_error {
+            if rpc_failure.status == grpcio::RpcStatusCode::UNAUTHENTICATED {
+                return true;
+            }
+        }
+
+        false
+    }
+
+    pub fn retry_login(&self) -> Result<(), DgraphError> {
+        let mut jwt = self
+            .jwt
+            .lock()
+            .expect("Unable to block or acquire lock to jwt mutex");
+
+        if jwt.refresh_jwt.len() == 0 {
+            return Err(DgraphError::JwtRefreshTokenEmpty);
+        }
+
+        let dc = self.any_client().expect("Cannot alter. No client present");
+        let login_request = api::LoginRequest {
+            refresh_token: jwt.refresh_jwt.clone(),
+            ..Default::default()
+        };
+        let response = dc.login(&login_request)?;
+
+        *jwt = serde_json::from_str(std::str::from_utf8(&response.json).unwrap()).unwrap();
+
+        Ok(())
     }
 }

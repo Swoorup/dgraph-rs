@@ -141,7 +141,7 @@ fn main() {
 
     let resp = dgraph
         .new_readonly_txn()
-        .query_with_vars(query, vars)
+        .query_with_vars(&query, vars)
         .expect("query");
     let root: Root = serde_json::from_slice(&resp.json).expect("Failed to convert slice to JSON.");
 

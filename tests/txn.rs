@@ -31,7 +31,7 @@ fn it_runs_simple_query() {
         }}"#,
         uid
     );
-    let resp = dgraph.new_readonly_txn().query(query);
+    let resp = dgraph.new_readonly_txn().query(&query);
     let json: UidJson = serde_json::from_slice(&resp.unwrap().json).unwrap();
 
     assert_eq!(json.uids[0].uid, uid);
@@ -50,7 +50,7 @@ fn it_runs_query_with_vars() {
     .to_string();
     let mut vars = HashMap::new();
     vars.insert("$a".to_string(), uid.to_string());
-    let resp = dgraph.new_readonly_txn().query_with_vars(query, vars);
+    let resp = dgraph.new_readonly_txn().query_with_vars(&query, vars);
     let json: UidJson = serde_json::from_slice(&resp.unwrap().json).unwrap();
 
     assert_eq!(json.uids[0].uid, uid);
@@ -67,7 +67,7 @@ fn it_returns_error_if_mandatory_var_is_omitted() {
     }"#
     .to_string();
     let vars = HashMap::new();
-    let resp = dgraph.new_readonly_txn().query_with_vars(query, vars);
+    let resp = dgraph.new_readonly_txn().query_with_vars(&query, vars);
 
     let error_matched = match resp.unwrap_err() {
         DgraphError::GrpcError(grpcio::Error::RpcFailure(_)) => true,
@@ -91,7 +91,7 @@ fn it_runs_multiple_queries_in_a_single_transaction() {
     );
     let mut txn = dgraph.new_readonly_txn();
     let resp1 = txn.query(&query);
-    let resp2 = txn.query(query);
+    let resp2 = txn.query(&query);
 
     assert!(resp1.is_ok());
     assert!(resp2.is_ok());

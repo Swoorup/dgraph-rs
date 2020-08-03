@@ -11,6 +11,7 @@ pub struct Txn<'a> {
     pub(super) best_effort: bool,
     pub(super) mutated: bool,
     pub(super) client: &'a api_grpc::DgraphClient,
+    pub(super) dgraph: &'a crate::Dgraph,
 }
 
 /// Call Txn::discard() once txn goes out of scope.
@@ -34,40 +35,53 @@ impl Txn<'_> {
         Ok(self)
     }
 
-    pub fn query(&mut self, query: impl Into<String>) -> Result<api::Response, DgraphError> {
+    pub fn query(&mut self, query: &str) -> Result<api::Response, DgraphError> {
         self.query_with_vars(query, HashMap::new())
-    }
-
-    pub fn query_with_vars(
-        &mut self,
-        query: impl Into<String>,
-        vars: HashMap<String, String>,
-    ) -> Result<api::Response, DgraphError> {
-        if self.finished {
-            return Err(DgraphError::TxnFinished);
-        }
-
-        let res = self.client.query(&api::Request {
-            query: query.into(),
-            start_ts: self.context.start_ts,
-            vars,
-            read_only: self.read_only,
-            best_effort: self.best_effort,
-            ..Default::default()
-        })?;
-
-        let txn = match res.txn.as_ref() {
-            Some(txn) => txn,
-            None => return Err(DgraphError::EmptyTxn),
-        };
-
-        self.merge_context(txn)?;
-
-        Ok(res)
     }
 
     cfg_if::cfg_if! {
         if #[cfg(feature = "dgraph-1-0")] {
+            pub fn query_with_vars(
+                &mut self,
+                query: &str,
+                vars: HashMap<String, String>,
+            ) -> Result<api::Response, DgraphError> {
+                if self.finished {
+                    return Err(DgraphError::TxnFinished);
+                }
+
+                let request = api::Request {
+                    query: query.to_string(),
+                    start_ts: self.context.start_ts,
+                    vars: vars.clone(),
+                    read_only: self.read_only,
+                    best_effort: self.best_effort,
+                    ..Default::default()
+                };
+                let response = self.client.query(&request);
+
+                match response {
+                    Ok(response) => {
+                        let txn = match response.txn.as_ref() {
+                            Some(txn) => txn,
+                            None => return Err(DgraphError::EmptyTxn),
+                        };
+
+                        self.merge_context(txn)?;
+
+                        Ok(response)
+                    }
+                    Err(err) => {
+                        if self.dgraph.is_jwt_expired(&err) {
+                            self.dgraph.retry_login()?;
+                            self.query_with_vars(query, vars)
+                        } else {
+                            Err(err.into())
+                        }
+                    }
+                }
+            }
+
             pub fn mutate(&mut self, mut mu: api::Mutation) -> Result<api::Assigned, DgraphError> {
                 match (self.finished, self.read_only) {
                     (true, _) => return Err(DgraphError::TxnFinished),
@@ -115,6 +129,23 @@ impl Txn<'_> {
                 Ok(mu_res)
             }
         } else if #[cfg(feature = "dgraph-1-1")] {
+            pub fn query_with_vars(
+                &mut self,
+                query: &str,
+                vars: HashMap<String, String>,
+            ) -> Result<api::Response, DgraphError> {
+                let mut request = api::Request {
+                    query: query.to_string(),
+                    vars,
+                    start_ts: self.context.get_start_ts(),
+                    read_only: self.read_only,
+                    best_effort: self.best_effort,
+                    ..Default::default()
+                };
+
+                self.do_request(&mut request)
+            }
+
             pub fn mutate(&mut self, mu: api::Mutation) -> Result<api::Response, DgraphError> {
                 let mut request = api::Request::new();
                 let mutations = vec![mu.clone()];
@@ -144,10 +175,26 @@ impl Txn<'_> {
 
                 let response = match self.client.query(&request) {
                     Ok(response) => response,
-                    Err(e) => {
-                        let _ = self.discard();
+                    Err(err) => {
+                        let retry_result = if self.dgraph.is_jwt_expired(&err) {
+                            match self.dgraph.retry_login() {
+                                Ok(_) => match self.client.query(&request) {
+                                    Ok(response) => Ok(response),
+                                    Err(err) => Err(err.into()),
+                                },
+                                Err(err) => Err(err),
+                            }
+                        } else {
+                            Err(err.into())
+                        };
 
-                        return Err(DgraphError::GrpcError(e));
+                        match retry_result {
+                            Ok(response) => response,
+                            Err(err) => {
+                                let _ = self.discard();
+                                return Err(err);
+                            }
+                        }
                     },
                 };
 
@@ -187,9 +234,21 @@ impl Txn<'_> {
             return Ok(());
         }
 
-        self.client.commit_or_abort(&self.context)?;
+        let res = self.client.commit_or_abort(&self.context);
 
-        Ok(())
+        match res {
+            Ok(_) => Ok(()),
+            Err(err) => {
+                if self.dgraph.is_jwt_expired(&err) {
+                    self.dgraph.retry_login()?;
+                    self.client.commit_or_abort(&self.context)?;
+
+                    Ok(())
+                } else {
+                    Err(err.into())
+                }
+            }
+        }
     }
 
     fn merge_context(&mut self, src: &api::TxnContext) -> Result<(), DgraphError> {
