@@ -159,8 +159,7 @@ fn main() {
                 name
             }
         }
-    }"#
-    .to_string();
+    }"#;
 
     let mut vars = HashMap::new();
     vars.insert("$a".to_string(), "Alice".to_string());

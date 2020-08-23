@@ -74,8 +74,7 @@ fn main() {
             name
             last_seen
         }
-    }"#
-    .to_string();
+    }"#;
 
     let mut vars = HashMap::new();
     vars.insert("$a".to_string(), "Casey".to_string());

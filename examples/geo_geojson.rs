@@ -72,8 +72,7 @@ fn main() {
             name
             location
         }
-    }"#
-    .to_string();
+    }"#;
 
     let mut vars = HashMap::new();
     vars.insert("$a".to_string(), "Bratislava".to_string());

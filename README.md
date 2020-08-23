@@ -164,12 +164,12 @@ let q = r#"query all($a: string) {
     all(func: eq(name, $a)) {
       name
     }
-  }"#.to_string();
+  }"#;
 
 let mut vars = HashMap::new();
 vars.insert("$a".to_string(), "Alice".to_string());
 
-let resp = dgraph.new_readonly_txn().query_with_vars(q, vars).expect("query");
+let resp = dgraph.new_readonly_txn().query_with_vars(&q, vars).expect("query");
 let root: Root = serde_json::from_slice(&resp.json).expect("parsing");
 println!("Root: {:#?}", root);
 ```
@@ -186,9 +186,9 @@ let q = r#"schema(pred: [name]) {
   count
   upsert
   lang
-}"#.to_string();
+}"#;
 
-let resp = txn.query(q)?;
+let resp = txn.query(&q)?;
 println!("{:#?}", resp.schema);
 ```
 
