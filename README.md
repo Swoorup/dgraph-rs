@@ -41,7 +41,7 @@ certain prerequisites needed before it can be installed. You can find them in
 
 ```toml
 [dependencies]
-dgraph = "0.3.1"
+dgraph = "0.4.0"
 ```
 
 There are also a couple of passthrough `grpcio` features available:
