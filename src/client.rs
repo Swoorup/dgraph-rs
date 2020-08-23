@@ -108,7 +108,7 @@ impl Dgraph {
             .lock()
             .expect("Unable to block or acquire lock to jwt mutex");
 
-        if jwt.refresh_jwt.len() == 0 {
+        if jwt.refresh_jwt.is_empty() {
             return Err(DgraphError::JwtRefreshTokenEmpty);
         }
 

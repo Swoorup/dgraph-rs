@@ -73,7 +73,7 @@ impl Txn<'_> {
             return Err(DgraphError::TxnFinished);
         }
 
-        if mutation_list.len() > 0 {
+        if !mutation_list.is_empty() {
             if self.read_only {
                 return Err(DgraphError::TxnReadOnly);
             }
